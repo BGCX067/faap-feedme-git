@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Titles -->
+    <string name="app_name">Feed Me</string>
+    <string name="title_plan">Wochenplan</string>
+    <string name="title_recipes">Rezepte</string>
+
+    <!-- Weekdays -->
+    <string name="mon">Mo</string>
+    <string name="tue">Di</string>
+    <string name="wed">Mi</string>
+    <string name="thu">Do</string>
+    <string name="fri">Fr</string>
+    <string name="sat">Sa</string>
+    <string name="sun">So</string>
+
+    <!-- Dashboard -->
+    <string name="db_plan">Wochenplan</string>
+    <string name="db_recipes">Rezepte</string>
+    <string name="db_update">Update</string>
+
+</resources>
