@@ -39,7 +39,7 @@ public class PlanActivity extends ActionBarActivity {
 
 	mContext = getApplicationContext();
 	mFPAdapter = new mFPAdapter(getSupportFragmentManager());
-	mViewPager = (ViewPager) findViewById(R.id.mViewPager);
+	mViewPager = (ViewPager) findViewById(R.id.plan_viewpager);
 	mViewPager.setAdapter(mFPAdapter);
 	mTPIndicator = (TitlePageIndicator) findViewById(R.id.plan_indicator);
 	mTPIndicator.setViewPager(mViewPager, 1);

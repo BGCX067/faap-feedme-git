@@ -9,6 +9,8 @@
     <!-- Indicator -->
     <string name="ind_week">Diese Woche</string>
     <string name="ind_planner">Vorgaben</string>
+    <string name="ind_ingredients">Zutaten</string>
+    <string name="ind_preperation">Zubereitung</string>
 
     <!-- Weekdays -->
     <string name="mon">Mo</string>

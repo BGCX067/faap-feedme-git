@@ -25,6 +25,8 @@
         </activity>
         <activity android:name=".ui.RecipesActivity" >
         </activity>
+        <activity android:name=".ui.PreperationActivity" >
+        </activity>
     </application>
 
 </manifest>

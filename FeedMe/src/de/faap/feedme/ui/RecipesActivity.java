@@ -1,5 +1,6 @@
 package de.faap.feedme.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -8,7 +9,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.android.actionbarcompat.ActionBarActivity;
 
@@ -37,9 +37,13 @@ public class RecipesActivity extends ActionBarActivity {
 	    @Override
 	    public void onItemClick(AdapterView<?> a, View v, int position,
 		    long id) {
-		Toast.makeText(getApplicationContext(),
-			((TextView) v).getText() + ": \"Cook me, cook me!\"",
-			Toast.LENGTH_SHORT).show();
+		Intent mIntent = new Intent(getApplicationContext(),
+			PreperationActivity.class);
+		mIntent.putExtra(DashboardActivity.ACTIONBAR_TITLE,
+			((TextView) v).getText());
+		mIntent.putExtra(DashboardActivity.ACTIONBAR_ICON,
+			DashboardActivity.iconRecipes);
+		startActivity(mIntent);
 	    }
 
 	});
