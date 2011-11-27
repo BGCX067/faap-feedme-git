@@ -32,4 +32,8 @@ public class MockModel {
 	int rand = (int) (Math.random() * slowCount);
 	return slow[rand];
     }
+
+    public String[] getTheCoolFood() {
+	return slow;
+    }
 }

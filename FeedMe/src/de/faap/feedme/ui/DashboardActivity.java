@@ -42,7 +42,12 @@ public class DashboardActivity extends ActionBarActivity {
 		new OnClickListener() {
 		    @Override
 		    public void onClick(View v) {
-
+			Intent mIntent = new Intent(getApplicationContext(),
+				RecipesActivity.class);
+			mIntent.putExtra(ACTIONBAR_TITLE, getResources()
+				.getString(R.string.title_recipes));
+			mIntent.putExtra(ACTIONBAR_ICON, iconRecipes);
+			startActivity(mIntent);
 		    }
 		});
 
