@@ -1,5 +1,6 @@
 package de.faap.feedme.ui;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -15,6 +16,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.actionbarcompat.ActionBarActivity;
+import com.viewpagerindicator.TitlePageIndicator;
+import com.viewpagerindicator.TitleProvider;
 
 import de.faap.feedme.R;
 import de.faap.feedme.provider.MockModel;
@@ -22,9 +25,11 @@ import de.faap.feedme.provider.MockModel;
 public class PlanActivity extends ActionBarActivity {
 
     private static final int NUM_ITEMS = 2;
+    private static Context mContext;
 
     private mFPAdapter mFPAdapter;
     private ViewPager mViewPager;
+    private TitlePageIndicator mTPIndicator;
 
     /** Called when the activity is first created. */
     @Override
@@ -32,11 +37,12 @@ public class PlanActivity extends ActionBarActivity {
 	super.onCreate(savedInstanceState);
 	setContentView(R.layout.plan);
 
+	mContext = getApplicationContext();
 	mFPAdapter = new mFPAdapter(getSupportFragmentManager());
 	mViewPager = (ViewPager) findViewById(R.id.mViewPager);
 	mViewPager.setAdapter(mFPAdapter);
-
-	mViewPager.setCurrentItem(1);
+	mTPIndicator = (TitlePageIndicator) findViewById(R.id.plan_indicator);
+	mTPIndicator.setViewPager(mViewPager, 1);
     }
 
     @Override
@@ -70,7 +76,8 @@ public class PlanActivity extends ActionBarActivity {
 	return super.onOptionsItemSelected(item);
     }
 
-    public static class mFPAdapter extends FragmentPagerAdapter {
+    private static class mFPAdapter extends FragmentPagerAdapter implements
+	    TitleProvider {
 
 	public mFPAdapter(FragmentManager fm) {
 	    super(fm);
@@ -90,11 +97,20 @@ public class PlanActivity extends ActionBarActivity {
 	public int getCount() {
 	    return NUM_ITEMS;
 	}
+
+	@Override
+	public String getTitle(int position) {
+	    if (position == 0) {
+		return mContext.getResources().getString(R.string.ind_planner);
+	    } else if (position == 1) {
+		return mContext.getResources().getString(R.string.ind_week);
+	    } else {
+		return null;
+	    }
+	}
     }
 
-    public static class WeekFragment extends Fragment {
-	private int mNum;
-
+    private static class WeekFragment extends Fragment {
 	public TextView sat;
 	public TextView sun;
 	public TextView mon;
@@ -105,10 +121,10 @@ public class PlanActivity extends ActionBarActivity {
 
 	static WeekFragment newInstance(int position) {
 	    WeekFragment mWF = new WeekFragment();
-
-	    Bundle args = new Bundle();
-	    args.putInt("num", position);
-	    mWF.setArguments(args);
+	    // TODO irgendwann entfernen, beispiel code für extras
+	    // Bundle args = new Bundle();
+	    // args.putInt("num", position);
+	    // mWF.setArguments(args);
 
 	    return mWF;
 	}
@@ -116,7 +132,6 @@ public class PlanActivity extends ActionBarActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
-	    mNum = getArguments() != null ? getArguments().getInt("num") : 2;
 	}
 
 	@Override
@@ -146,30 +161,21 @@ public class PlanActivity extends ActionBarActivity {
 	}
     }
 
-    public static class PlannerFragment extends Fragment {
-	private int mNum;
-
+    private static class PlannerFragment extends Fragment {
 	static PlannerFragment newInstance(int position) {
 	    PlannerFragment mPF = new PlannerFragment();
-
-	    Bundle args = new Bundle();
-	    args.putInt("num", position);
-	    mPF.setArguments(args);
-
 	    return mPF;
 	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
-	    mNum = getArguments() != null ? getArguments().getInt("num") : 2;
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 		Bundle savedInstanceState) {
 	    View v = inflater.inflate(R.layout.planner, container, false);
-
 	    return v;
 	}
     }

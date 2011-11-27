@@ -6,6 +6,10 @@
     <string name="title_plan">Wochenplan</string>
     <string name="title_recipes">Rezepte</string>
 
+    <!-- Indicator -->
+    <string name="ind_week">Diese Woche</string>
+    <string name="ind_planner">Vorgaben</string>
+
     <!-- Weekdays -->
     <string name="mon">Mo</string>
     <string name="tue">Di</string>
