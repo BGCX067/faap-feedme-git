@@ -5,16 +5,16 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class RecipeDatabase extends SQLiteOpenHelper {
+    public static final String TABLE_RECIPES = "Recipes";
+    public static final String TABLE_INGREDIENTS = "Ingredients";
+    public static final String TABLE_TYPE = "Type";
+    public static final String TABLE_EFFORT = "Effort";
+    public static final String TABLE_CUISINE = "Cuisine";
+    public static final String TABLE_ONETAKES = "One_takes";
+    public static final String TABLE_CATEGORIES = "Categories";
+
     private static final String DATABASE_NAME = "Recipe_database";
     private static final int DATABASE_VERSION = 1;
-    // table names
-    private static final String TABLE_RECIPES = "Recipes";
-    private static final String TABLE_INGREDIENTS = "Ingredients";
-    private static final String TABLE_TYPE = "Type";
-    private static final String TABLE_EFFORT = "Effort";
-    private static final String TABLE_CUISINE = "Cuisine";
-    private static final String TABLE_ONETAKES = "One_takes";
-    private static final String TABLE_CATEGORIES = "Categories";
 
     public RecipeDatabase(Context context) {
 	super(context, DATABASE_NAME, null, DATABASE_VERSION);

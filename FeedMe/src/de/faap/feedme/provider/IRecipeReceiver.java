@@ -1,7 +1,11 @@
 package de.faap.feedme.provider;
 
-import de.faap.feedme.util.Recipe;
+import java.util.Collection;
 
 public interface IRecipeReceiver {
-    public boolean addRecipe(Recipe recipe);
+    public void addTable(String tableName, Collection<String[]> tableContents);
+
+    public void open();
+
+    public void close();
 }
