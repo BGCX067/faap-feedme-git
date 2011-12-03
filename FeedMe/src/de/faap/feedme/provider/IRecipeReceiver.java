@@ -1,9 +1,9 @@
 package de.faap.feedme.provider;
 
-import java.util.Collection;
+import android.content.ContentValues;
 
 public interface IRecipeReceiver {
-    public void addTable(String tableName, Collection<String[]> tableContents);
+    public void addTable(String tableName, ContentValues values);
 
     public void open();
 

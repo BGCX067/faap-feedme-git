@@ -1,31 +1,32 @@
 package de.faap.feedme.provider;
 
-import java.util.Collection;
-
+import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 
 public class RecipeReceiver implements IRecipeReceiver {
 
     private RecipeDatabase openHelper;
-    private SQLiteDatabase recipeDatabase;
+    private SQLiteDatabase db;
 
     public RecipeReceiver(RecipeDatabase rd) {
 	openHelper = rd;
     }
 
     @Override
-    public void addTable(String tableName, Collection<String[]> tableContents) {
-	// TODO add tables
+    public void open() {
+	db = openHelper.getWritableDatabase();
     }
 
     @Override
-    public void open() {
-	recipeDatabase = openHelper.getWritableDatabase();
+    public void addTable(String tableName, ContentValues values) {
+	if (db.isOpen()) {
+	    db.insert(tableName, null, values);
+	}
     }
 
     @Override
     public void close() {
-	recipeDatabase.close();
+	db.close();
     }
 
 }
