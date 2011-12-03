@@ -225,6 +225,5 @@ public class PlanActivity extends ActionBarActivity {
 	    editor.putInt("fri", fri.getCheckedRadioButtonId());
 	    editor.commit();
 	}
-
     }
 }
