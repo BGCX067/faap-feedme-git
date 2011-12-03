@@ -1,6 +1,7 @@
 package de.faap.feedme.ui;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -12,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -162,6 +164,16 @@ public class PlanActivity extends ActionBarActivity {
     }
 
     private static class PlannerFragment extends Fragment {
+	private static final String PREF = "planner_settings";
+
+	private RadioGroup sat;
+	private RadioGroup sun;
+	private RadioGroup mon;
+	private RadioGroup tue;
+	private RadioGroup wed;
+	private RadioGroup thu;
+	private RadioGroup fri;
+
 	static PlannerFragment newInstance(int position) {
 	    PlannerFragment mPF = new PlannerFragment();
 	    return mPF;
@@ -176,7 +188,43 @@ public class PlanActivity extends ActionBarActivity {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 		Bundle savedInstanceState) {
 	    View v = inflater.inflate(R.layout.planner, container, false);
+
+	    sat = (RadioGroup) v.findViewById(R.id.radioGroup0);
+	    sun = (RadioGroup) v.findViewById(R.id.radioGroup1);
+	    mon = (RadioGroup) v.findViewById(R.id.radioGroup2);
+	    tue = (RadioGroup) v.findViewById(R.id.radioGroup3);
+	    wed = (RadioGroup) v.findViewById(R.id.radioGroup4);
+	    thu = (RadioGroup) v.findViewById(R.id.radioGroup5);
+	    fri = (RadioGroup) v.findViewById(R.id.radioGroup6);
+
+	    // restore settings
+	    SharedPreferences settings = mContext.getSharedPreferences(PREF, 0);
+	    sat.check(settings.getInt("sat", -1));
+	    sun.check(settings.getInt("sun", -1));
+	    mon.check(settings.getInt("mon", -1));
+	    tue.check(settings.getInt("tue", -1));
+	    wed.check(settings.getInt("wed", -1));
+	    thu.check(settings.getInt("thu", -1));
+	    fri.check(settings.getInt("fri", -1));
+
 	    return v;
 	}
+
+	@Override
+	public void onDestroyView() {
+	    super.onDestroyView();
+	    // save settings
+	    SharedPreferences settings = mContext.getSharedPreferences(PREF, 0);
+	    SharedPreferences.Editor editor = settings.edit();
+	    editor.putInt("sat", sat.getCheckedRadioButtonId());
+	    editor.putInt("sun", sun.getCheckedRadioButtonId());
+	    editor.putInt("mon", mon.getCheckedRadioButtonId());
+	    editor.putInt("tue", tue.getCheckedRadioButtonId());
+	    editor.putInt("wed", wed.getCheckedRadioButtonId());
+	    editor.putInt("thu", thu.getCheckedRadioButtonId());
+	    editor.putInt("fri", fri.getCheckedRadioButtonId());
+	    editor.commit();
+	}
+
     }
 }
