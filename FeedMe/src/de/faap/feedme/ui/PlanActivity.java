@@ -66,9 +66,26 @@ public class PlanActivity extends ActionBarActivity {
 	    break;
 
 	case R.id.menu_refresh:
-	    Toast.makeText(this, "Fake refreshing...", Toast.LENGTH_SHORT)
+	    Toast.makeText(this, "Refresh diet plan...", Toast.LENGTH_SHORT)
 		    .show();
 	    getActionBarHelper().setRefreshActionItemState(true);
+
+	    // woche "updaten"
+	    // TODO vernünftig machen
+	    String[] week = new String[7];
+	    MockModel model = new MockModel();
+	    week[0] = model.IWillTakeMyTimeToCreateSomethingSpecial();
+	    week[1] = week[0];
+	    week[2] = model.iWantFoodFast();
+	    week[3] = model.iWantFoodFast();
+	    week[4] = model.iWantFoodFast();
+	    week[5] = "---";
+	    week[6] = "---";
+	    preferences.saveWeek(week);
+
+	    // TODO update views. side effects? see adapter implementation
+	    mFPAdapter.notifyDataSetChanged();
+
 	    getWindow().getDecorView().postDelayed(new Runnable() {
 		@Override
 		public void run() {
@@ -112,16 +129,16 @@ public class PlanActivity extends ActionBarActivity {
 		return null;
 	    }
 	}
+
+	// TODO side effects? this method was inserted to update the views when
+	// notifydatasetchanged got called
+	@Override
+	public int getItemPosition(Object object) {
+	    return POSITION_NONE;
+	}
     }
 
     private static class WeekFragment extends Fragment {
-	public TextView sat;
-	public TextView sun;
-	public TextView mon;
-	public TextView tue;
-	public TextView wed;
-	public TextView thu;
-	public TextView fri;
 
 	static WeekFragment newInstance(int position) {
 	    WeekFragment mWF = new WeekFragment();
@@ -143,23 +160,14 @@ public class PlanActivity extends ActionBarActivity {
 		Bundle savedInstanceState) {
 	    View v = inflater.inflate(R.layout.week, container, false);
 
-	    sat = (TextView) v.findViewById(R.id.rcp_sat);
-	    sun = (TextView) v.findViewById(R.id.rcp_sun);
-	    mon = (TextView) v.findViewById(R.id.rcp_mon);
-	    tue = (TextView) v.findViewById(R.id.rcp_tue);
-	    wed = (TextView) v.findViewById(R.id.rcp_wed);
-	    thu = (TextView) v.findViewById(R.id.rcp_thu);
-	    fri = (TextView) v.findViewById(R.id.rcp_fri);
-
-	    // TODO vernünftig machen =)
-	    MockModel model = new MockModel();
-	    sat.setText(model.IWillTakeMyTimeToCreateSomethingSpecial());
-	    sun.setText(sat.getText());
-	    mon.setText(model.iWantFoodFast());
-	    tue.setText(model.iWantFoodFast());
-	    wed.setText(model.iWantFoodFast());
-	    thu.setText("---");
-	    fri.setText("---");
+	    String[] week = preferences.getWeek();
+	    ((TextView) v.findViewById(R.id.rcp_sat)).setText(week[0]);
+	    ((TextView) v.findViewById(R.id.rcp_sun)).setText(week[1]);
+	    ((TextView) v.findViewById(R.id.rcp_mon)).setText(week[2]);
+	    ((TextView) v.findViewById(R.id.rcp_tue)).setText(week[3]);
+	    ((TextView) v.findViewById(R.id.rcp_wed)).setText(week[4]);
+	    ((TextView) v.findViewById(R.id.rcp_thu)).setText(week[5]);
+	    ((TextView) v.findViewById(R.id.rcp_fri)).setText(week[6]);
 
 	    return v;
 	}
@@ -189,6 +197,7 @@ public class PlanActivity extends ActionBarActivity {
 		Bundle savedInstanceState) {
 	    View v = inflater.inflate(R.layout.planner, container, false);
 
+	    // save groups. needed for saving later on
 	    sat = (RadioGroup) v.findViewById(R.id.radioGroup0);
 	    sun = (RadioGroup) v.findViewById(R.id.radioGroup1);
 	    mon = (RadioGroup) v.findViewById(R.id.radioGroup2);
@@ -196,17 +205,6 @@ public class PlanActivity extends ActionBarActivity {
 	    wed = (RadioGroup) v.findViewById(R.id.radioGroup4);
 	    thu = (RadioGroup) v.findViewById(R.id.radioGroup5);
 	    fri = (RadioGroup) v.findViewById(R.id.radioGroup6);
-
-	    // restore settings
-	    // SharedPreferences settings = mContext.getSharedPreferences(PREF,
-	    // 0);
-	    // sat.check(settings.getInt("sat", -1));
-	    // sun.check(settings.getInt("sun", -1));
-	    // mon.check(settings.getInt("mon", -1));
-	    // tue.check(settings.getInt("tue", -1));
-	    // wed.check(settings.getInt("wed", -1));
-	    // thu.check(settings.getInt("thu", -1));
-	    // fri.check(settings.getInt("fri", -1));
 
 	    int[] checkedButtons = preferences.getCheckedButtons();
 	    sat.check(checkedButtons[0]);
@@ -233,18 +231,6 @@ public class PlanActivity extends ActionBarActivity {
 	    checkedButtons[5] = thu.getCheckedRadioButtonId();
 	    checkedButtons[6] = fri.getCheckedRadioButtonId();
 	    preferences.saveCheckedButtons(checkedButtons);
-
-	    // SharedPreferences settings = mContext.getSharedPreferences(PREF,
-	    // 0);
-	    // SharedPreferences.Editor editor = settings.edit();
-	    // editor.putInt("sat", sat.getCheckedRadioButtonId());
-	    // editor.putInt("sun", sun.getCheckedRadioButtonId());
-	    // editor.putInt("mon", mon.getCheckedRadioButtonId());
-	    // editor.putInt("tue", tue.getCheckedRadioButtonId());
-	    // editor.putInt("wed", wed.getCheckedRadioButtonId());
-	    // editor.putInt("thu", thu.getCheckedRadioButtonId());
-	    // editor.putInt("fri", fri.getCheckedRadioButtonId());
-	    // editor.commit();
 	}
     }
 }
