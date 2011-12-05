@@ -11,6 +11,9 @@
     <string name="ind_planner">Vorgaben</string>
     <string name="ind_ingredients">Zutaten</string>
     <string name="ind_preperation">Zubereitung</string>
+    <string name="ind_effort">Aufwand</string>
+    <string name="ind_type">Art</string>
+    <string name="ind_cuisine">Herkunft</string>
 
     <!-- Weekdays -->
     <string name="mon">Mo</string>
