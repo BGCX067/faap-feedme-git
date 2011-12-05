@@ -30,6 +30,7 @@ public class Preferences implements IPreferences {
 	for (int i = 0; i < checkedButtons.length; i++) {
 	    editor.putInt("radioGroup" + i, checkedButtons[i]);
 	}
+	editor.commit();
     }
 
     @Override
@@ -47,6 +48,7 @@ public class Preferences implements IPreferences {
 	for (int i = 0; i < type.length; i++) {
 	    editor.putString("type" + i, type[i]);
 	}
+	editor.commit();
     }
 
     @Override
@@ -64,6 +66,7 @@ public class Preferences implements IPreferences {
 	for (int i = 0; i < effort.length; i++) {
 	    editor.putString("effort" + i, effort[i]);
 	}
+	editor.commit();
     }
 
     @Override
@@ -81,6 +84,7 @@ public class Preferences implements IPreferences {
 	for (int i = 0; i < cuisine.length; i++) {
 	    editor.putString("cuisine" + i, cuisine[i]);
 	}
+	editor.commit();
     }
 
     @Override
@@ -97,6 +101,7 @@ public class Preferences implements IPreferences {
 	for (int i = 0; i < week.length; i++) {
 	    editor.putString("week" + i, week[i]);
 	}
+	editor.commit();
     }
 
 }

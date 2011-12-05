@@ -1,7 +1,6 @@
 package de.faap.feedme.ui;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -23,11 +22,13 @@ import com.viewpagerindicator.TitleProvider;
 
 import de.faap.feedme.R;
 import de.faap.feedme.provider.MockModel;
+import de.faap.feedme.util.Preferences;
 
 public class PlanActivity extends ActionBarActivity {
 
     private static final int NUM_ITEMS = 2;
     private static Context mContext;
+    private static Preferences preferences;
 
     private mFPAdapter mFPAdapter;
     private ViewPager mViewPager;
@@ -45,6 +46,7 @@ public class PlanActivity extends ActionBarActivity {
 	mViewPager.setAdapter(mFPAdapter);
 	mTPIndicator = (TitlePageIndicator) findViewById(R.id.plan_indicator);
 	mTPIndicator.setViewPager(mViewPager, 1);
+	preferences = new Preferences(this);
     }
 
     @Override
@@ -141,7 +143,6 @@ public class PlanActivity extends ActionBarActivity {
 		Bundle savedInstanceState) {
 	    View v = inflater.inflate(R.layout.week, container, false);
 
-	    // TODO vernünftig machen =)
 	    sat = (TextView) v.findViewById(R.id.rcp_sat);
 	    sun = (TextView) v.findViewById(R.id.rcp_sun);
 	    mon = (TextView) v.findViewById(R.id.rcp_mon);
@@ -150,6 +151,7 @@ public class PlanActivity extends ActionBarActivity {
 	    thu = (TextView) v.findViewById(R.id.rcp_thu);
 	    fri = (TextView) v.findViewById(R.id.rcp_fri);
 
+	    // TODO vernünftig machen =)
 	    MockModel model = new MockModel();
 	    sat.setText(model.IWillTakeMyTimeToCreateSomethingSpecial());
 	    sun.setText(sat.getText());
@@ -164,8 +166,6 @@ public class PlanActivity extends ActionBarActivity {
     }
 
     private static class PlannerFragment extends Fragment {
-	private static final String PREF = "planner_settings";
-
 	private RadioGroup sat;
 	private RadioGroup sun;
 	private RadioGroup mon;
@@ -198,14 +198,24 @@ public class PlanActivity extends ActionBarActivity {
 	    fri = (RadioGroup) v.findViewById(R.id.radioGroup6);
 
 	    // restore settings
-	    SharedPreferences settings = mContext.getSharedPreferences(PREF, 0);
-	    sat.check(settings.getInt("sat", -1));
-	    sun.check(settings.getInt("sun", -1));
-	    mon.check(settings.getInt("mon", -1));
-	    tue.check(settings.getInt("tue", -1));
-	    wed.check(settings.getInt("wed", -1));
-	    thu.check(settings.getInt("thu", -1));
-	    fri.check(settings.getInt("fri", -1));
+	    // SharedPreferences settings = mContext.getSharedPreferences(PREF,
+	    // 0);
+	    // sat.check(settings.getInt("sat", -1));
+	    // sun.check(settings.getInt("sun", -1));
+	    // mon.check(settings.getInt("mon", -1));
+	    // tue.check(settings.getInt("tue", -1));
+	    // wed.check(settings.getInt("wed", -1));
+	    // thu.check(settings.getInt("thu", -1));
+	    // fri.check(settings.getInt("fri", -1));
+
+	    int[] checkedButtons = preferences.getCheckedButtons();
+	    sat.check(checkedButtons[0]);
+	    sun.check(checkedButtons[1]);
+	    mon.check(checkedButtons[2]);
+	    tue.check(checkedButtons[3]);
+	    wed.check(checkedButtons[4]);
+	    thu.check(checkedButtons[5]);
+	    fri.check(checkedButtons[6]);
 
 	    return v;
 	}
@@ -214,16 +224,27 @@ public class PlanActivity extends ActionBarActivity {
 	public void onDestroyView() {
 	    super.onDestroyView();
 	    // save settings
-	    SharedPreferences settings = mContext.getSharedPreferences(PREF, 0);
-	    SharedPreferences.Editor editor = settings.edit();
-	    editor.putInt("sat", sat.getCheckedRadioButtonId());
-	    editor.putInt("sun", sun.getCheckedRadioButtonId());
-	    editor.putInt("mon", mon.getCheckedRadioButtonId());
-	    editor.putInt("tue", tue.getCheckedRadioButtonId());
-	    editor.putInt("wed", wed.getCheckedRadioButtonId());
-	    editor.putInt("thu", thu.getCheckedRadioButtonId());
-	    editor.putInt("fri", fri.getCheckedRadioButtonId());
-	    editor.commit();
+	    int[] checkedButtons = new int[7];
+	    checkedButtons[0] = sat.getCheckedRadioButtonId();
+	    checkedButtons[1] = sun.getCheckedRadioButtonId();
+	    checkedButtons[2] = mon.getCheckedRadioButtonId();
+	    checkedButtons[3] = tue.getCheckedRadioButtonId();
+	    checkedButtons[4] = wed.getCheckedRadioButtonId();
+	    checkedButtons[5] = thu.getCheckedRadioButtonId();
+	    checkedButtons[6] = fri.getCheckedRadioButtonId();
+	    preferences.saveCheckedButtons(checkedButtons);
+
+	    // SharedPreferences settings = mContext.getSharedPreferences(PREF,
+	    // 0);
+	    // SharedPreferences.Editor editor = settings.edit();
+	    // editor.putInt("sat", sat.getCheckedRadioButtonId());
+	    // editor.putInt("sun", sun.getCheckedRadioButtonId());
+	    // editor.putInt("mon", mon.getCheckedRadioButtonId());
+	    // editor.putInt("tue", tue.getCheckedRadioButtonId());
+	    // editor.putInt("wed", wed.getCheckedRadioButtonId());
+	    // editor.putInt("thu", thu.getCheckedRadioButtonId());
+	    // editor.putInt("fri", fri.getCheckedRadioButtonId());
+	    // editor.commit();
 	}
     }
 }
