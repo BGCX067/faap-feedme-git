@@ -19,11 +19,17 @@ import com.viewpagerindicator.TitlePageIndicator;
 import com.viewpagerindicator.TitleProvider;
 
 import de.faap.feedme.R;
+import de.faap.feedme.provider.IRecipeProvider;
+import de.faap.feedme.provider.ProxyRecipeProvider;
+import de.faap.feedme.util.Recipe;
 
 public class PreperationActivity extends ActionBarActivity {
     private static final int NUM_ITEMS = 2;
-    private static Context mContext;
 
+    private static Context mContext;
+    private static Recipe recipe;
+
+    private IRecipeProvider db;
     private mFPAdapter mFPAdapter;
     private ViewPager mViewPager;
     private TitlePageIndicator mTPIndicator;
@@ -35,6 +41,12 @@ public class PreperationActivity extends ActionBarActivity {
 	setContentView(R.layout.preperation);
 
 	mContext = getApplicationContext();
+	db = ProxyRecipeProvider.getInstance(mContext);
+
+	Bundle bundle = getIntent().getExtras();
+	String recipeName = bundle.getString(DashboardActivity.ACTIONBAR_TITLE);
+	recipe = db.getRecipe(recipeName);
+
 	mFPAdapter = new mFPAdapter(getSupportFragmentManager());
 	mViewPager = (ViewPager) findViewById(R.id.prep_viewpager);
 	mViewPager.setAdapter(mFPAdapter);
@@ -105,7 +117,16 @@ public class PreperationActivity extends ActionBarActivity {
 		Bundle savedInstanceState) {
 	    View v = inflater.inflate(R.layout.ingredients, container, false);
 	    // TODO vernünftig machen
-	    String[] ingredients = { "Handy", "Guthaben" };
+
+	    double[] anzahl = recipe.getQuantities();
+	    String[] einheit = recipe.getUnits();
+	    String[] zutat = recipe.getIngredients();
+
+	    String[] ingredients = new String[anzahl.length];
+
+	    for (int i = 0; i < ingredients.length; i++) {
+		ingredients[i] = anzahl[i] + einheit[i] + " " + zutat[i];
+	    }
 
 	    ListView mListView = (ListView) v
 		    .findViewById(R.id.ingredients_listview);
@@ -132,10 +153,8 @@ public class PreperationActivity extends ActionBarActivity {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 		Bundle savedInstanceState) {
 	    View v = inflater.inflate(R.layout.prepdetails, container, false);
-	    // TODO vernünftig machen
-
 	    TextView mTextView = (TextView) v.findViewById(R.id.prep_textview);
-	    mTextView.setText("PizzaTaxi anrufen");
+	    mTextView.setText(recipe.getPreperation());
 	    return v;
 	}
     }

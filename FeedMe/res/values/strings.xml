@@ -28,5 +28,8 @@
     <string name="db_plan">Wochenplan</string>
     <string name="db_recipes">Rezepte</string>
     <string name="db_update">Update</string>
+    
+    <!--  Preperation -->
+    <string name="prep_portions">Portionen</string>
 
 </resources>

@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,7 +26,6 @@ import de.faap.feedme.R;
 import de.faap.feedme.util.Preferences;
 
 public class RecipesActivity extends ActionBarActivity {
-
     private static final int NUM_ITEMS = 3;
 
     private static Context mContext;
@@ -128,7 +128,7 @@ public class RecipesActivity extends ActionBarActivity {
 	    mock[0] = "2";
 	    preferences.saveCuisine(mock);
 
-	    String[] category = { "scheiße" };
+	    String[] category = { "" };
 	    // load the right list
 	    if (pos == 0) {
 		category = preferences.getEffort();
@@ -146,6 +146,7 @@ public class RecipesActivity extends ActionBarActivity {
 		@Override
 		public void onItemClick(AdapterView<?> a, View v, int position,
 			long id) {
+		    Log.d("faap", "recipe activity on click");
 		    Intent mIntent = new Intent(mContext,
 			    PreperationActivity.class);
 		    mIntent.putExtra(DashboardActivity.ACTIONBAR_TITLE,

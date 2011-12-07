@@ -22,6 +22,23 @@ public class ProxyRecipeProvider implements IRecipeProvider {
 
     private ProxyRecipeProvider() {
 	map = new HashMap<String, Recipe>();
+	// TODO mock sachen entfernen
+	int portions = 2;
+	double[] quantities = { 1, 2, 500 };
+	String[] units = { "", "l", "g" };
+	String[] ingredients = { "Ei", "Wasser", "Mehl" };
+	String preperation = "Zusammenmischen, 10min in Pfanne, namnamnam";
+
+	Recipe r0 = new Recipe("0", portions, quantities, units, ingredients,
+		preperation);
+	Recipe r1 = new Recipe("1", portions, quantities, units, ingredients,
+		preperation);
+	Recipe r2 = new Recipe("2", portions, quantities, units, ingredients,
+		preperation);
+
+	map.put("0", r0);
+	map.put("1", r1);
+	map.put("2", r2);
     }
 
     public static ProxyRecipeProvider getInstance(Context context) {
