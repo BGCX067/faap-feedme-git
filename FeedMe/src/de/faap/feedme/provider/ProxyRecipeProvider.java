@@ -3,6 +3,7 @@ package de.faap.feedme.provider;
 import java.util.HashMap;
 import java.util.Map;
 
+import android.content.Context;
 import de.faap.feedme.util.Recipe;
 
 /**
@@ -15,15 +16,16 @@ public class ProxyRecipeProvider implements IRecipeProvider {
 
     private static final ProxyRecipeProvider instance = new ProxyRecipeProvider();
 
-    private RecipeProvider rp;
+    private static Context mContext;
+
     private Map<String, Recipe> map;
 
     private ProxyRecipeProvider() {
-	rp = new RecipeProvider();
 	map = new HashMap<String, Recipe>();
     }
 
-    public static ProxyRecipeProvider getInstance() {
+    public static ProxyRecipeProvider getInstance(Context context) {
+	mContext = context;
 	return instance;
     }
 
@@ -32,7 +34,7 @@ public class ProxyRecipeProvider implements IRecipeProvider {
 	if (map.containsKey(name)) {
 	    return map.get(name);
 	} else {
-	    return rp.getRecipe(name);
+	    return new RecipeProvider(mContext).getRecipe(name);
 	}
     }
 }

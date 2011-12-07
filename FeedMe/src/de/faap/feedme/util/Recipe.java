@@ -1,27 +1,53 @@
 package de.faap.feedme.util;
 
 public class Recipe {
-    // TODO mit autschi abstimmen, array, arraylist, was auch immer
     private String name;
-    private String[] ingredients;
+    private int portions;
     private double[] quantities;
+    private String[] units;
+    private String[] ingredients;
     private String preperation;
-    private String[] types;
-    private String effort;
-    private String cuisine;
-    private int portion;
 
-    public Recipe(String name, String[] ingredients, double[] quantities,
-	    String preperation, String[] types, String effort, String cuisine,
-	    int portion) {
+    public Recipe(String name, int portions, double[] quantities,
+	    String[] units, String[] ingredients, String preperation) {
 	this.name = name;
-	this.ingredients = ingredients;
+	this.portions = portions;
 	this.quantities = quantities;
+	this.units = units;
+	this.ingredients = ingredients;
 	this.preperation = preperation;
-	this.types = types;
-	this.effort = effort;
-	this.cuisine = cuisine;
-	this.portion = portion;
+    }
+
+    public String getName() {
+	return name;
+    }
+
+    public int getPortions() {
+	return portions;
+    }
+
+    public double[] getQuantities() {
+	return quantities;
+    }
+
+    public String[] getUnits() {
+	return units;
+    }
+
+    public String[] getIngredients() {
+	return ingredients;
+    }
+
+    public String getPreperation() {
+	return preperation;
+    }
+
+    public void changePortions(int newPortions) {
+	double quotient = newPortions / portions;
+	portions = newPortions;
+	for (double d : quantities) {
+	    d = d * quotient;
+	}
     }
 
 }

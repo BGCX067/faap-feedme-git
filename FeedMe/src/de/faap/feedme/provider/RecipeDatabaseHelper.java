@@ -4,7 +4,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-public class RecipeDatabase extends SQLiteOpenHelper {
+public class RecipeDatabaseHelper extends SQLiteOpenHelper {
     public static final String TABLE_RECIPES = "Recipes";
     public static final String TABLE_INGREDIENTS = "Ingredients";
     public static final String TABLE_TYPE = "Type";
@@ -16,33 +16,60 @@ public class RecipeDatabase extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "Recipe_database";
     private static final int DATABASE_VERSION = 1;
 
-    public RecipeDatabase(Context context) {
+    public RecipeDatabaseHelper(Context context) {
 	super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-	db.execSQL("CREATE TABLE " + TABLE_RECIPES + " ("
-		+ "_id INTEGER PRIMARY KEY," + "name TEXT NOT NULL,"
-		+ "preperation TEXT NOT NULL," + "effort INTEGER NOT NULL,"
-		+ "cuisine INTEGER NOT NULL," + "portion INTEGER NOT NULL"
-		+ ";");
-	db.execSQL("CREATE TABLE " + TABLE_INGREDIENTS + " ("
-		+ "_id INTEGER PRIMARY KEY," + "name TEXT NOT NULL,"
-		+ "unit TEXT NOT NULL" + ";");
-	db.execSQL("CREATE TABLE " + TABLE_TYPE + " ("
-		+ "_id INTEGER PRIMARY KEY," + "name TEXT NOT NULL" + ";");
 	db.execSQL("CREATE TABLE " + TABLE_EFFORT + " ("
-		+ "_id INTEGER PRIMARY KEY," + "name TEXT NOT NULL" + ";");
+		+ "_id INTEGER PRIMARY KEY," 
+		+ "name TEXT" 
+		+ ");");
+	
 	db.execSQL("CREATE TABLE " + TABLE_CUISINE + " ("
-		+ "_id INTEGER PRIMARY KEY," + "name TEXT NOT NULL" + ";");
+		+ "_id INTEGER PRIMARY KEY," 
+		+ "name TEXT" 
+		+ ");");
+	
+	db.execSQL("CREATE TABLE " + TABLE_RECIPES + " ("
+		+ "_id INTEGER PRIMARY KEY," 
+		+ "name TEXT,"
+		+ "preperation TEXT," 
+		+ "effort INTEGER,"
+		+ "cuisine INTEGER," 
+		+ "portion INTEGER,"
+		+ "FOREIGN KEY (effort) REFERENCES " + TABLE_EFFORT + "(_id),"
+		+ "FOREIGN KEY (cuisine) REFERENCES " + TABLE_CUISINE + "(_id)"
+		+ ");");
+	
+	db.execSQL("CREATE TABLE " + TABLE_INGREDIENTS + " ("
+		+ "_id INTEGER PRIMARY KEY," 
+		+ "name TEXT,"
+		+ "unit TEXT" 
+		+ ");");
+	
+	db.execSQL("CREATE TABLE " + TABLE_TYPE + " ("
+		+ "_id INTEGER PRIMARY KEY," 
+		+ "name TEXT" 
+		+ ");");
+
 	db.execSQL("CREATE TABLE " + TABLE_ONETAKES + " ("
-		+ "name INTEGER PRIMARY KEY,"
-		+ "ingredient INTEGER PRIMARY KEY,"
-		+ "quantitiy INTEGER NOT NULL" + ";");
+		+ "name INTEGER,"
+		+ "ingredient INTEGER,"
+		+ "quantitiy INTEGER," 
+		+ "FOREIGN KEY (name) REFERENCES " + TABLE_RECIPES + "(_id),"
+		+ "FOREIGN KEY (ingredient) REFERENCES " + TABLE_INGREDIENTS + "(_id),"
+		+ "PRIMARY KEY (name, ingredient)"
+		+ ");");
+	
 	db.execSQL("CREATE TABLE " + TABLE_CATEGORIES + " ("
-		+ "name INTEGER PRIMARY KEY," + "type INTEGER PRIMARY KEY"
-		+ ";");
+		+ "name INTEGER," 
+		+ "type INTEGER,"
+		+ "FOREIGN KEY (name) REFERENCES " + TABLE_RECIPES + "(_id),"
+		+ "FOREIGN KEY (type) REFERENCES " + TABLE_TYPE + "(_id),"
+		+ "PRIMARY KEY (name, type)"
+		+ ");");
     }
 
     @Override

@@ -5,10 +5,10 @@ import android.database.sqlite.SQLiteDatabase;
 
 public class RecipeReceiver implements IRecipeReceiver {
 
-    private RecipeDatabase openHelper;
+    private RecipeDatabaseHelper openHelper;
     private SQLiteDatabase db;
 
-    public RecipeReceiver(RecipeDatabase rd) {
+    public RecipeReceiver(RecipeDatabaseHelper rd) {
 	openHelper = rd;
     }
 
