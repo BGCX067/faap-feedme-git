@@ -10,6 +10,8 @@ import android.view.View.OnClickListener;
 import com.example.android.actionbarcompat.ActionBarActivity;
 
 import de.faap.feedme.R;
+import de.faap.feedme.io.DatabaseUpdater;
+import de.faap.feedme.io.IUpdateDatabase;
 
 public class DashboardActivity extends ActionBarActivity {
 
@@ -52,13 +54,12 @@ public class DashboardActivity extends ActionBarActivity {
 
 	findViewById(R.id.dashboard_btn_update).setOnClickListener(
 		new OnClickListener() {
-		    boolean foo = false;
-
 		    @Override
 		    public void onClick(View v) {
-			foo = !foo;
-			getActionBarHelper().setProgressBarState(foo);
-			// TODO: start update-thread
+			IUpdateDatabase updater = new DatabaseUpdater();
+			getActionBarHelper().setProgressBarState(true);
+			updater.update();
+			getActionBarHelper().setProgressBarState(false);
 		    }
 		});
     }
