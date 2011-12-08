@@ -54,8 +54,8 @@ public class RecipeProvider implements IRecipeProvider {
 	
 	for (int i = 0; complexRecipeData.moveToNext(); i++) {
 	    quantities[i] = complexRecipeData.getDouble(0);
-	    units[i] = complexRecipeData.getString(1);
-	    ingredients[i] = complexRecipeData.getString(2);
+	    ingredients[i] = complexRecipeData.getString(1);
+	    units[i] = complexRecipeData.getString(2);
 	}
 
 	db.close();

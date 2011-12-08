@@ -24,10 +24,10 @@ import de.faap.feedme.provider.ProxyRecipeProvider;
 import de.faap.feedme.util.Recipe;
 
 public class PreperationActivity extends ActionBarActivity {
-    private static final int NUM_ITEMS = 2;
+    static final int NUM_ITEMS = 2;
 
-    private static Context mContext;
-    private static Recipe recipe;
+    static Context mContext;
+    static Recipe recipe;
 
     private IRecipeProvider db;
     private mFPAdapter mFPAdapter;
@@ -42,7 +42,6 @@ public class PreperationActivity extends ActionBarActivity {
 
 	mContext = getApplicationContext();
 	db = ProxyRecipeProvider.getInstance(mContext);
-
 	Bundle bundle = getIntent().getExtras();
 	String recipeName = bundle.getString(DashboardActivity.ACTIONBAR_TITLE);
 	recipe = db.getRecipe(recipeName);
@@ -64,7 +63,7 @@ public class PreperationActivity extends ActionBarActivity {
 	return super.onOptionsItemSelected(item);
     }
 
-    private static class mFPAdapter extends FragmentPagerAdapter implements
+    private class mFPAdapter extends FragmentPagerAdapter implements
 	    TitleProvider {
 
 	public mFPAdapter(FragmentManager fm) {
@@ -74,9 +73,9 @@ public class PreperationActivity extends ActionBarActivity {
 	@Override
 	public Fragment getItem(int position) {
 	    if (position == 0) {
-		return IngredientsFragment.newInstance(position);
+		return new IngredientsFragment();
 	    } else if (position == 1) {
-		return PreperationFragment.newInstance(position);
+		return new PreperationFragment();
 	    }
 	    return null;
 	}
@@ -100,12 +99,7 @@ public class PreperationActivity extends ActionBarActivity {
 	}
     }
 
-    private static class IngredientsFragment extends Fragment {
-
-	static IngredientsFragment newInstance(int position) {
-	    IngredientsFragment mIF = new IngredientsFragment();
-	    return mIF;
-	}
+    private class IngredientsFragment extends Fragment {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -116,7 +110,8 @@ public class PreperationActivity extends ActionBarActivity {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 		Bundle savedInstanceState) {
 	    View v = inflater.inflate(R.layout.ingredients, container, false);
-	    // TODO vernünftig machen
+	    // TODO load ingredients
+	    // add button to change protions, add logic to do so
 
 	    double[] anzahl = recipe.getQuantities();
 	    String[] einheit = recipe.getUnits();
@@ -138,11 +133,7 @@ public class PreperationActivity extends ActionBarActivity {
 	}
     }
 
-    private static class PreperationFragment extends Fragment {
-	static PreperationFragment newInstance(int position) {
-	    PreperationFragment mPF = new PreperationFragment();
-	    return mPF;
-	}
+    private class PreperationFragment extends Fragment {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {

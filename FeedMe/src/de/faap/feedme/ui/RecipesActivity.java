@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,10 +25,10 @@ import de.faap.feedme.R;
 import de.faap.feedme.util.Preferences;
 
 public class RecipesActivity extends ActionBarActivity {
-    private static final int NUM_ITEMS = 3;
+    static final int NUM_ITEMS = 3;
 
-    private static Context mContext;
-    private static Preferences preferences;
+    static Context mContext;
+    static Preferences preferences;
 
     private mFPAdapter mFPAdapter;
     private ViewPager mViewPager;
@@ -42,12 +41,13 @@ public class RecipesActivity extends ActionBarActivity {
 	setContentView(R.layout.recipes);
 
 	mContext = getApplicationContext();
+	preferences = new Preferences(this);
+
 	mFPAdapter = new mFPAdapter(getSupportFragmentManager());
 	mViewPager = (ViewPager) findViewById(R.id.recipes_viewpager);
 	mViewPager.setAdapter(mFPAdapter);
 	mTPIndicator = (TitlePageIndicator) findViewById(R.id.recipes_indicator);
 	mTPIndicator.setViewPager(mViewPager, 1);
-	preferences = new Preferences(this);
     }
 
     @Override
@@ -60,7 +60,7 @@ public class RecipesActivity extends ActionBarActivity {
 	return super.onOptionsItemSelected(item);
     }
 
-    private static class mFPAdapter extends FragmentPagerAdapter implements
+    private class mFPAdapter extends FragmentPagerAdapter implements
 	    TitleProvider {
 
 	public mFPAdapter(FragmentManager fm) {
@@ -94,13 +94,20 @@ public class RecipesActivity extends ActionBarActivity {
 	}
     }
 
+    /**
+     * Creates fragments according to the category and loads the according
+     * recipe-lists
+     * 
+     * @author joe
+     * 
+     */
     private static class CategoryFragment extends Fragment {
+
 	private int pos;
 
 	static CategoryFragment newInstance(int position) {
 	    CategoryFragment mCF = new CategoryFragment();
 
-	    // needed to load right array
 	    Bundle args = new Bundle();
 	    args.putInt("num", position);
 	    mCF.setArguments(args);
@@ -120,7 +127,8 @@ public class RecipesActivity extends ActionBarActivity {
 	    ListView v = (ListView) inflater.inflate(R.layout.listview,
 		    container, false);
 
-	    // TODO mock the entries :) delete this
+	    // TODO query category/recipes
+	    // dont save them in preferences
 	    String[] mock = { "0" };
 	    preferences.saveEffort(mock);
 	    mock[0] = "1";
@@ -138,6 +146,7 @@ public class RecipesActivity extends ActionBarActivity {
 		category = preferences.getCuisine();
 	    }
 
+	    // TODO Expandable List needed!
 	    v.setAdapter(new ArrayAdapter<String>(mContext, R.layout.listitem,
 		    category));
 
@@ -146,7 +155,6 @@ public class RecipesActivity extends ActionBarActivity {
 		@Override
 		public void onItemClick(AdapterView<?> a, View v, int position,
 			long id) {
-		    Log.d("faap", "recipe activity on click");
 		    Intent mIntent = new Intent(mContext,
 			    PreperationActivity.class);
 		    mIntent.putExtra(DashboardActivity.ACTIONBAR_TITLE,

@@ -58,6 +58,7 @@ public class DashboardActivity extends ActionBarActivity {
 		    public void onClick(View v) {
 			foo = !foo;
 			getActionBarHelper().setProgressBarState(foo);
+			// TODO: start update-thread
 		    }
 		});
     }

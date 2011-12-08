@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.android.actionbarcompat.ActionBarActivity;
 import com.viewpagerindicator.TitlePageIndicator;
@@ -26,9 +25,10 @@ import de.faap.feedme.util.Preferences;
 
 public class PlanActivity extends ActionBarActivity {
 
-    private static final int NUM_ITEMS = 2;
-    private static Context mContext;
-    private static Preferences preferences;
+    static final int NUM_ITEMS = 2;
+
+    Context mContext;
+    Preferences preferences;
 
     private mFPAdapter mFPAdapter;
     private ViewPager mViewPager;
@@ -41,12 +41,13 @@ public class PlanActivity extends ActionBarActivity {
 	setContentView(R.layout.plan);
 
 	mContext = getApplicationContext();
+	preferences = new Preferences(this);
+
 	mFPAdapter = new mFPAdapter(getSupportFragmentManager());
 	mViewPager = (ViewPager) findViewById(R.id.plan_viewpager);
 	mViewPager.setAdapter(mFPAdapter);
 	mTPIndicator = (TitlePageIndicator) findViewById(R.id.plan_indicator);
 	mTPIndicator.setViewPager(mViewPager, 1);
-	preferences = new Preferences(this);
     }
 
     @Override
@@ -66,12 +67,13 @@ public class PlanActivity extends ActionBarActivity {
 	    break;
 
 	case R.id.menu_refresh:
-	    Toast.makeText(this, "Refresh diet plan...", Toast.LENGTH_SHORT)
-		    .show();
 	    getActionBarHelper().setRefreshActionItemState(true);
 
-	    // woche "updaten"
-	    // TODO vernünftig machen
+	    // TODO refresh week
+	    // check buttons
+	    // query recipes
+	    // compute result
+	    // save recipe-names
 	    String[] week = new String[7];
 	    MockModel model = new MockModel();
 	    week[0] = model.IWillTakeMyTimeToCreateSomethingSpecial();
@@ -81,23 +83,22 @@ public class PlanActivity extends ActionBarActivity {
 	    week[4] = model.iWantFoodFast();
 	    week[5] = "---";
 	    week[6] = "---";
+
 	    preferences.saveWeek(week);
-
-	    // TODO update views. side effects? see adapter implementation
 	    mFPAdapter.notifyDataSetChanged();
-
-	    getWindow().getDecorView().postDelayed(new Runnable() {
-		@Override
-		public void run() {
-		    getActionBarHelper().setRefreshActionItemState(false);
-		}
-	    }, 1000);
+	    getActionBarHelper().setRefreshActionItemState(false);
 	    break;
 	}
 	return super.onOptionsItemSelected(item);
     }
 
-    private static class mFPAdapter extends FragmentPagerAdapter implements
+    /**
+     * This class creates planner and week fragments and provides their titles
+     * 
+     * @author joe
+     * 
+     */
+    private class mFPAdapter extends FragmentPagerAdapter implements
 	    TitleProvider {
 
 	public mFPAdapter(FragmentManager fm) {
@@ -107,9 +108,9 @@ public class PlanActivity extends ActionBarActivity {
 	@Override
 	public Fragment getItem(int position) {
 	    if (position == 0) {
-		return PlannerFragment.newInstance(position);
+		return new PlannerFragment();
 	    } else if (position == 1) {
-		return WeekFragment.newInstance(position);
+		return new WeekFragment();
 	    }
 	    return null;
 	}
@@ -130,26 +131,19 @@ public class PlanActivity extends ActionBarActivity {
 	    }
 	}
 
-	// TODO side effects? this method was inserted to update the views when
-	// notifydatasetchanged got called
 	@Override
 	public int getItemPosition(Object object) {
 	    return POSITION_NONE;
 	}
     }
 
-    private static class WeekFragment extends Fragment {
-
-	static WeekFragment newInstance(int position) {
-	    WeekFragment mWF = new WeekFragment();
-	    // TODO irgendwann entfernen, beispiel code für extras
-	    // Bundle args = new Bundle();
-	    // args.putInt("num", position);
-	    // mWF.setArguments(args);
-
-	    return mWF;
-	}
-
+    /**
+     * This class handles the week overview
+     * 
+     * @author joe
+     * 
+     */
+    private class WeekFragment extends Fragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
@@ -161,6 +155,8 @@ public class PlanActivity extends ActionBarActivity {
 	    View v = inflater.inflate(R.layout.week, container, false);
 
 	    String[] week = preferences.getWeek();
+
+	    // TODO make Textviews clickable
 	    ((TextView) v.findViewById(R.id.rcp_sat)).setText(week[0]);
 	    ((TextView) v.findViewById(R.id.rcp_sun)).setText(week[1]);
 	    ((TextView) v.findViewById(R.id.rcp_mon)).setText(week[2]);
@@ -169,11 +165,21 @@ public class PlanActivity extends ActionBarActivity {
 	    ((TextView) v.findViewById(R.id.rcp_thu)).setText(week[5]);
 	    ((TextView) v.findViewById(R.id.rcp_fri)).setText(week[6]);
 
+	    // TODO implements button listeners
+	    // query, preferences, etctect
+
 	    return v;
 	}
     }
 
-    private static class PlannerFragment extends Fragment {
+    /**
+     * This class handles user preferences for computing the diet plan
+     * 
+     * @author joe
+     * 
+     */
+    private class PlannerFragment extends Fragment {
+	// radio groups handles needed for loading and saving preferences
 	private RadioGroup sat;
 	private RadioGroup sun;
 	private RadioGroup mon;
@@ -181,11 +187,6 @@ public class PlanActivity extends ActionBarActivity {
 	private RadioGroup wed;
 	private RadioGroup thu;
 	private RadioGroup fri;
-
-	static PlannerFragment newInstance(int position) {
-	    PlannerFragment mPF = new PlannerFragment();
-	    return mPF;
-	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -197,7 +198,6 @@ public class PlanActivity extends ActionBarActivity {
 		Bundle savedInstanceState) {
 	    View v = inflater.inflate(R.layout.planner, container, false);
 
-	    // save groups. needed for saving later on
 	    sat = (RadioGroup) v.findViewById(R.id.radioGroup0);
 	    sun = (RadioGroup) v.findViewById(R.id.radioGroup1);
 	    mon = (RadioGroup) v.findViewById(R.id.radioGroup2);
@@ -207,6 +207,7 @@ public class PlanActivity extends ActionBarActivity {
 	    fri = (RadioGroup) v.findViewById(R.id.radioGroup6);
 
 	    int[] checkedButtons = preferences.getCheckedButtons();
+
 	    sat.check(checkedButtons[0]);
 	    sun.check(checkedButtons[1]);
 	    mon.check(checkedButtons[2]);
@@ -221,8 +222,9 @@ public class PlanActivity extends ActionBarActivity {
 	@Override
 	public void onDestroyView() {
 	    super.onDestroyView();
-	    // save settings
+
 	    int[] checkedButtons = new int[7];
+
 	    checkedButtons[0] = sat.getCheckedRadioButtonId();
 	    checkedButtons[1] = sun.getCheckedRadioButtonId();
 	    checkedButtons[2] = mon.getCheckedRadioButtonId();
@@ -230,6 +232,7 @@ public class PlanActivity extends ActionBarActivity {
 	    checkedButtons[4] = wed.getCheckedRadioButtonId();
 	    checkedButtons[5] = thu.getCheckedRadioButtonId();
 	    checkedButtons[6] = fri.getCheckedRadioButtonId();
+
 	    preferences.saveCheckedButtons(checkedButtons);
 	}
     }
