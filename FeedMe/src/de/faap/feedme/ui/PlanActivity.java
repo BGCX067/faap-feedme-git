@@ -1,6 +1,9 @@
 package de.faap.feedme.ui;
 
+import java.util.GregorianCalendar;
+
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -11,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -154,21 +158,62 @@ public class PlanActivity extends ActionBarActivity {
 		Bundle savedInstanceState) {
 	    View v = inflater.inflate(R.layout.week, container, false);
 
+	    // Check if update is needed
+	    int[] nextUpdate = preferences.getNextUpdate();
+	    GregorianCalendar now = new GregorianCalendar();
+	    GregorianCalendar update = new GregorianCalendar(nextUpdate[0],
+		    nextUpdate[1], nextUpdate[2]);
+	    if (now.compareTo(update) >= 0) {
+		// update needed
+		// TODO update week
+		// TODO save recipes
+	    }
+
+	    // Find textviews
+	    TextView sat = (TextView) v.findViewById(R.id.rcp_sat);
+	    TextView sun = (TextView) v.findViewById(R.id.rcp_sun);
+	    TextView mon = (TextView) v.findViewById(R.id.rcp_mon);
+	    TextView tue = (TextView) v.findViewById(R.id.rcp_tue);
+	    TextView wed = (TextView) v.findViewById(R.id.rcp_wed);
+	    TextView thu = (TextView) v.findViewById(R.id.rcp_thu);
+	    TextView fri = (TextView) v.findViewById(R.id.rcp_fri);
+	    // Set recipe names
 	    String[] week = preferences.getWeek();
-
-	    // TODO make Textviews clickable
-	    ((TextView) v.findViewById(R.id.rcp_sat)).setText(week[0]);
-	    ((TextView) v.findViewById(R.id.rcp_sun)).setText(week[1]);
-	    ((TextView) v.findViewById(R.id.rcp_mon)).setText(week[2]);
-	    ((TextView) v.findViewById(R.id.rcp_tue)).setText(week[3]);
-	    ((TextView) v.findViewById(R.id.rcp_wed)).setText(week[4]);
-	    ((TextView) v.findViewById(R.id.rcp_thu)).setText(week[5]);
-	    ((TextView) v.findViewById(R.id.rcp_fri)).setText(week[6]);
-
-	    // TODO implements button listeners
-	    // query, preferences, etctect
+	    sat.setText(week[0]);
+	    sun.setText(week[1]);
+	    mon.setText(week[2]);
+	    tue.setText(week[3]);
+	    wed.setText(week[4]);
+	    thu.setText(week[5]);
+	    fri.setText(week[6]);
+	    // Set Listeners
+	    OnClickListener listener = new OnClickListener() {
+		@Override
+		public void onClick(View v) {
+		    startActivity(buildIntent((String) ((TextView) v).getText()));
+		}
+	    };
+	    sat.setOnClickListener(listener);
+	    sun.setOnClickListener(listener);
+	    mon.setOnClickListener(listener);
+	    tue.setOnClickListener(listener);
+	    wed.setOnClickListener(listener);
+	    thu.setOnClickListener(listener);
+	    fri.setOnClickListener(listener);
 
 	    return v;
+	}
+
+	/**
+	 * Returns an intent to start a preperation activity with the given
+	 * recipe name
+	 */
+	private Intent buildIntent(String name) {
+	    Intent mIntent = new Intent(mContext, PreperationActivity.class);
+	    mIntent.putExtra(DashboardActivity.ACTIONBAR_TITLE, name);
+	    mIntent.putExtra(DashboardActivity.ACTIONBAR_ICON,
+		    DashboardActivity.iconRecipes);
+	    return mIntent;
 	}
     }
 

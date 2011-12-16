@@ -104,4 +104,21 @@ public class Preferences implements IPreferences {
 	editor.commit();
     }
 
+    @Override
+    public int[] getNextUpdate() {
+	int[] lastUpdate = new int[3];
+	lastUpdate[0] = preferences.getInt("upd_year", 0);
+	lastUpdate[1] = preferences.getInt("upd_month", 1);
+	lastUpdate[2] = preferences.getInt("upd_day", 1);
+	return lastUpdate;
+    }
+
+    @Override
+    public void saveNextUpdate(int year, int month, int day) {
+	editor.putInt("upd_year", year);
+	editor.putInt("upd_month", month);
+	editor.putInt("upd_day", day);
+	editor.commit();
+    }
+
 }

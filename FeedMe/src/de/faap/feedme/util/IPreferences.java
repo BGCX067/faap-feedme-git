@@ -20,4 +20,8 @@ public interface IPreferences {
     public String[] getWeek();
 
     public void saveWeek(String[] week);
+
+    public int[] getNextUpdate();
+
+    public void saveNextUpdate(int year, int month, int day);
 }
