@@ -21,6 +21,7 @@
             android:text="Essen" />
 
         <Button
+        	android:id="@+id/rcp_btn_sat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_column="3"
@@ -47,6 +48,7 @@
             android:text="Essen" />
 
         <Button
+        	android:id="@+id/rcp_btn_sun"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_column="3"
@@ -73,6 +75,7 @@
             android:text="Essen" />
 
         <Button
+        	android:id="@+id/rcp_btn_mon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_column="3"
@@ -99,6 +102,7 @@
             android:text="Essen" />
 
         <Button
+        	android:id="@+id/rcp_btn_tue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_column="3"
@@ -125,6 +129,7 @@
             android:text="Essen" />
 
         <Button
+        	android:id="@+id/rcp_btn_wed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_column="3"
@@ -151,6 +156,7 @@
             android:text="Essen" />
 
         <Button
+        	android:id="@+id/rcp_btn_thu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_column="3"
@@ -177,6 +183,7 @@
             android:text="Essen" />
 
         <Button
+        	android:id="@+id/rcp_btn_fri"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_column="3"

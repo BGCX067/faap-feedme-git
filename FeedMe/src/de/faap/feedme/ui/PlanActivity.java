@@ -1,7 +1,5 @@
 package de.faap.feedme.ui;
 
-import java.util.GregorianCalendar;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
@@ -24,7 +23,9 @@ import com.viewpagerindicator.TitlePageIndicator;
 import com.viewpagerindicator.TitleProvider;
 
 import de.faap.feedme.R;
+import de.faap.feedme.provider.IRecipeProvider;
 import de.faap.feedme.provider.MockModel;
+import de.faap.feedme.provider.RecipeProvider;
 import de.faap.feedme.util.Preferences;
 
 public class PlanActivity extends ActionBarActivity {
@@ -73,11 +74,7 @@ public class PlanActivity extends ActionBarActivity {
 	case R.id.menu_refresh:
 	    getActionBarHelper().setRefreshActionItemState(true);
 
-	    // TODO refresh week
-	    // check buttons
-	    // query recipes
-	    // compute result
-	    // save recipe-names
+	    // TODO refresh week & save
 	    String[] week = new String[7];
 	    MockModel model = new MockModel();
 	    week[0] = model.IWillTakeMyTimeToCreateSomethingSpecial();
@@ -158,16 +155,19 @@ public class PlanActivity extends ActionBarActivity {
 		Bundle savedInstanceState) {
 	    View v = inflater.inflate(R.layout.week, container, false);
 
-	    // Check if update is needed
-	    int[] nextUpdate = preferences.getNextUpdate();
-	    GregorianCalendar now = new GregorianCalendar();
-	    GregorianCalendar update = new GregorianCalendar(nextUpdate[0],
-		    nextUpdate[1], nextUpdate[2]);
-	    if (now.compareTo(update) >= 0) {
-		// update needed
-		// TODO update week
-		// TODO save recipes
-	    }
+	    // TODO wenn db fertig kommentare entfernen
+
+	    // // Check if automatic weekly update is needed
+	    // int[] nextUpdate = preferences.getNextUpdate();
+	    // GregorianCalendar now = new GregorianCalendar();
+	    // GregorianCalendar update = new GregorianCalendar(nextUpdate[0],
+	    // nextUpdate[1], nextUpdate[2]);
+	    // if (now.compareTo(update) >= 0) {
+	    // // update needed
+	    // IRecipeProvider provider = new RecipeProvider(mContext);
+	    // preferences.saveWeek(provider.getNewWeek(preferences
+	    // .getCheckedButtons()));
+	    // }
 
 	    // Find textviews
 	    TextView sat = (TextView) v.findViewById(R.id.rcp_sat);
@@ -186,7 +186,7 @@ public class PlanActivity extends ActionBarActivity {
 	    wed.setText(week[4]);
 	    thu.setText(week[5]);
 	    fri.setText(week[6]);
-	    // Set Listeners
+	    // Set listeners
 	    OnClickListener listener = new OnClickListener() {
 		@Override
 		public void onClick(View v) {
@@ -200,6 +200,24 @@ public class PlanActivity extends ActionBarActivity {
 	    wed.setOnClickListener(listener);
 	    thu.setOnClickListener(listener);
 	    fri.setOnClickListener(listener);
+
+	    // TODO Set refresh listeners
+	    // this is a mock for update week button without saving
+	    ((Button) v.findViewById(R.id.rcp_btn_sat))
+		    .setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+			    IRecipeProvider provider = new RecipeProvider(
+				    mContext);
+			    provider.getNewWeek(preferences.getCheckedButtons());
+			}
+		    });
+	    // ((Button) v.findViewById(R.id.rcp_btn_sun)).
+	    // ((Button) v.findViewById(R.id.rcp_btn_mon)).
+	    // ((Button) v.findViewById(R.id.rcp_btn_tue)).
+	    // ((Button) v.findViewById(R.id.rcp_btn_wed)).
+	    // ((Button) v.findViewById(R.id.rcp_btn_thu)).
+	    // ((Button) v.findViewById(R.id.rcp_btn_fri)).
 
 	    return v;
 	}

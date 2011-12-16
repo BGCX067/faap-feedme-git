@@ -9,8 +9,10 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -110,24 +112,34 @@ public class PreperationActivity extends ActionBarActivity {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 		Bundle savedInstanceState) {
 	    View v = inflater.inflate(R.layout.ingredients, container, false);
-	    // TODO load ingredients
-	    // add button to change protions, add logic to do so
 
-	    double[] anzahl = recipe.getQuantities();
-	    String[] einheit = recipe.getUnits();
-	    String[] zutat = recipe.getIngredients();
+	    // add button to change portions
+	    int portions = recipe.getPortions();
+	    Button ingredientsButton = (Button) v
+		    .findViewById(R.id.ingredients_btn);
+	    ingredientsButton.setText(portions);
+	    ingredientsButton.setOnClickListener(new OnClickListener() {
+		@Override
+		public void onClick(View v) {
 
-	    String[] ingredients = new String[anzahl.length];
+		}
+	    });
 
-	    for (int i = 0; i < ingredients.length; i++) {
-		ingredients[i] = anzahl[i] + einheit[i] + " " + zutat[i];
+	    // create list entries
+	    double[] quantities = recipe.getQuantities();
+	    String[] units = recipe.getUnits();
+	    String[] ingredients = recipe.getIngredients();
+	    String[] completeIngredients = new String[quantities.length];
+	    for (int i = 0; i < completeIngredients.length; i++) {
+		completeIngredients[i] = quantities[i] + units[i] + " "
+			+ ingredients[i];
 	    }
 
+	    // fill list
 	    ListView mListView = (ListView) v
 		    .findViewById(R.id.ingredients_listview);
-
 	    mListView.setAdapter(new ArrayAdapter<String>(mContext,
-		    R.layout.listitem, ingredients));
+		    R.layout.listitem, completeIngredients));
 
 	    return v;
 	}

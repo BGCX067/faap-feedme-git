@@ -54,4 +54,9 @@ public class ProxyRecipeProvider implements IRecipeProvider {
 	    return new RecipeProvider(mContext).getRecipe(name);
 	}
     }
+
+    @Override
+    public String[] getNewWeek(int[] prefs) {
+	return new RecipeProvider(mContext).getNewWeek(prefs);
+    }
 }

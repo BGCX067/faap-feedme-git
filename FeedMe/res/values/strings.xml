@@ -31,5 +31,6 @@
     
     <!--  Preperation -->
     <string name="prep_portions">Portionen</string>
+    <string name="prep_dialog">Bitte wählen Sie die gewünschte Anzahl an Portionen aus.</string>	
 
 </resources>
