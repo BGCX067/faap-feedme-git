@@ -45,8 +45,8 @@ public class Recipe {
     public void changePortions(int newPortions) {
 	double quotient = newPortions / portions;
 	portions = newPortions;
-	for (double d : quantities) {
-	    d = d * quotient;
+	for (int i = 0; i < quantities.length; i++) {
+	    quantities[i] = quantities[i] * quotient;
 	}
     }
 
