@@ -121,6 +121,7 @@ public class PreperationActivity extends ActionBarActivity {
 		Bundle savedInstanceState) {
 	    View v = inflater.inflate(R.layout.ingredients, container, false);
 
+	    // implement button to change portions
 	    Button ingredientsButton = (Button) v
 		    .findViewById(R.id.ingredients_btn);
 	    ingredientsButton.setText(Integer.toString(recipe.getPortions()));

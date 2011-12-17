@@ -7,14 +7,15 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.widget.AbsListView;
+import android.widget.BaseExpandableListAdapter;
+import android.widget.ExpandableListView;
 import android.widget.TextView;
 
 import com.example.android.actionbarcompat.ActionBarActivity;
@@ -124,8 +125,8 @@ public class RecipesActivity extends ActionBarActivity {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 		Bundle savedInstanceState) {
-	    ListView v = (ListView) inflater.inflate(R.layout.listview,
-		    container, false);
+	    ExpandableListView v = (ExpandableListView) inflater.inflate(
+		    R.layout.recipe_categories, container, false);
 
 	    // TODO query category/recipes
 	    // dont save them in preferences
@@ -136,37 +137,115 @@ public class RecipesActivity extends ActionBarActivity {
 	    mock[0] = "2";
 	    preferences.saveCuisine(mock);
 
-	    String[] category = { "" };
+	    String[] category = { "foobar" };
+	    String[][] recipes = new String[1][1];
 	    // load the right list
 	    if (pos == 0) {
-		category = preferences.getEffort();
+		recipes[0] = preferences.getEffort();
 	    } else if (pos == 1) {
-		category = preferences.getType();
-	    } else if (pos == 2) {
-		category = preferences.getCuisine();
+		recipes[0] = preferences.getType();
+	    } else {
+		recipes[0] = preferences.getCuisine();
 	    }
 
-	    // TODO Expandable List needed!
-	    v.setAdapter(new ArrayAdapter<String>(mContext, R.layout.listitem,
-		    category));
-
-	    v.setOnItemClickListener(new OnItemClickListener() {
-
-		@Override
-		public void onItemClick(AdapterView<?> a, View v, int position,
-			long id) {
-		    Intent mIntent = new Intent(mContext,
-			    PreperationActivity.class);
-		    mIntent.putExtra(DashboardActivity.ACTIONBAR_TITLE,
-			    ((TextView) v).getText());
-		    mIntent.putExtra(DashboardActivity.ACTIONBAR_ICON,
-			    DashboardActivity.iconRecipes);
-		    startActivity(mIntent);
-		}
-
-	    });
+	    v.setAdapter(new CategoryListAdapter(category, recipes));
 
 	    return v;
+	}
+
+	private class CategoryListAdapter extends BaseExpandableListAdapter {
+
+	    private String[] categories;
+	    private String[][] recipes;
+
+	    public CategoryListAdapter(String[] categories, String[][] recipes) {
+		this.categories = categories;
+		this.recipes = recipes;
+	    }
+
+	    @Override
+	    public Object getChild(int groupPosition, int childPosition) {
+		return recipes[groupPosition][childPosition];
+	    }
+
+	    @Override
+	    public long getChildId(int groupPosition, int childPosition) {
+		return childPosition;
+	    }
+
+	    @Override
+	    public View getChildView(int groupPosition, int childPosition,
+		    boolean isLastChild, View convertView, ViewGroup parent) {
+		TextView textView = getGenericView();
+		textView.setText(recipes[groupPosition][childPosition]);
+		textView.setOnClickListener(new OnClickListener() {
+		    @Override
+		    public void onClick(View v) {
+			Intent mIntent = new Intent(mContext,
+				PreperationActivity.class);
+			mIntent.putExtra(DashboardActivity.ACTIONBAR_TITLE,
+				((TextView) v).getText());
+			mIntent.putExtra(DashboardActivity.ACTIONBAR_ICON,
+				DashboardActivity.iconRecipes);
+			startActivity(mIntent);
+		    }
+		});
+		return textView;
+	    }
+
+	    @Override
+	    public int getChildrenCount(int groupPosition) {
+		return recipes[groupPosition].length;
+	    }
+
+	    @Override
+	    public Object getGroup(int groupPosition) {
+		return categories[groupPosition];
+	    }
+
+	    @Override
+	    public int getGroupCount() {
+		return categories.length;
+	    }
+
+	    @Override
+	    public long getGroupId(int groupPosition) {
+		return groupPosition;
+	    }
+
+	    @Override
+	    public View getGroupView(int groupPosition, boolean isExpanded,
+		    View convertView, ViewGroup parent) {
+		TextView textView = getGenericView();
+		textView.setText(categories[groupPosition]);
+		return textView;
+	    }
+
+	    @Override
+	    public boolean hasStableIds() {
+		return true;
+	    }
+
+	    public boolean isChildSelectable(int groupPosition,
+		    int childPosition) {
+		return true;
+	    }
+
+	    /**
+	     * Returns a new TextView which can be used as a Child- or
+	     * GroudView.
+	     */
+	    private TextView getGenericView() {
+		AbsListView.LayoutParams lp = new AbsListView.LayoutParams(
+			ViewGroup.LayoutParams.MATCH_PARENT, 60);
+
+		TextView textView = new TextView(mContext);
+		textView.setLayoutParams(lp);
+		textView.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
+		textView.setPadding(60, 0, 0, 0);
+		return textView;
+	    }
+
 	}
     }
 }
