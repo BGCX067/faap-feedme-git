@@ -6,19 +6,19 @@
     <Button
         android:id="@+id/dashboard_btn_plan"
         style="@style/DashboardButton"
-        android:drawableTop="@drawable/ic_launcher"
+        android:drawableTop="@drawable/ic_planer"
         android:text="@string/db_plan" />
 
     <Button
         android:id="@+id/dashboard_btn_recipes"
         style="@style/DashboardButton"
-        android:drawableTop="@drawable/ic_launcher"
+        android:drawableTop="@drawable/ic_recipes"
         android:text="@string/db_recipes" />
 
     <Button
         android:id="@+id/dashboard_btn_update"
         style="@style/DashboardButton"
-        android:drawableTop="@drawable/ic_launcher"
+        android:drawableTop="@drawable/ic_update"
         android:text="@string/db_update" />
 
 </com.google.android.apps.iosched.ui.widget.DashboardLayout>

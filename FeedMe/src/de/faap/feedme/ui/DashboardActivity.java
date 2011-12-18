@@ -17,8 +17,8 @@ public class DashboardActivity extends ActionBarActivity {
 
     public static final String ACTIONBAR_TITLE = "title";
     public static final String ACTIONBAR_ICON = "icon";
-    public static final int iconPlan = R.drawable.ic_home; // TODO anpassen
-    public static final int iconRecipes = R.drawable.ic_home; // TODO anpassen
+    public static final int iconPlan = R.drawable.ic_action_planer;
+    public static final int iconRecipes = R.drawable.ic_action_recipes;
 
     /** Called when the activity is first created. */
     @Override

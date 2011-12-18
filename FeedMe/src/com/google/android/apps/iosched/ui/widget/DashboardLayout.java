@@ -134,6 +134,10 @@ public class DashboardLayout extends ViewGroup {
 	    spaceDifference = Math.abs(vSpace - hSpace);
 	    if (rows * cols != visibleCount) {
 		spaceDifference *= UNEVEN_GRID_PENALTY_MULTIPLIER;
+	    } // XXX fix for landscape mode in else if
+	    else if (rows * mMaxChildHeight > height
+		    || cols * mMaxChildWidth > width) {
+		spaceDifference *= UNEVEN_GRID_PENALTY_MULTIPLIER;
 	    }
 
 	    if (spaceDifference < bestSpaceDifference) {
