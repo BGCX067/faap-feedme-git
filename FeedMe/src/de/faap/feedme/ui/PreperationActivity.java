@@ -26,6 +26,7 @@ import com.viewpagerindicator.TitleProvider;
 import de.faap.feedme.R;
 import de.faap.feedme.provider.IRecipeProvider;
 import de.faap.feedme.provider.ProxyRecipeProvider;
+import de.faap.feedme.util.Ingredient;
 import de.faap.feedme.util.Recipe;
 
 public class PreperationActivity extends ActionBarActivity {
@@ -136,20 +137,20 @@ public class PreperationActivity extends ActionBarActivity {
 	    });
 
 	    // create list entries
-	    double[] quantities = recipe.getQuantities();
-	    String[] units = recipe.getUnits();
-	    String[] ingredients = recipe.getIngredients();
-	    String[] completeIngredients = new String[quantities.length];
-	    for (int i = 0; i < completeIngredients.length; i++) {
-		completeIngredients[i] = quantities[i] + units[i] + " "
-			+ ingredients[i];
+	    // double[] quantities = recipe.getQuantities();
+	    // String[] units = recipe.getUnits();
+	    // String[] ingredients = recipe.getIngredients();
+	    Ingredient[] ingredients = recipe.getIngredients();
+	    String[] ingredientStrings = new String[ingredients.length];
+	    for (int i = 0; i < ingredientStrings.length; i++) {
+		ingredientStrings[i] = ingredients[i].toString();
 	    }
 
 	    // fill list
 	    ListView mListView = (ListView) v
 		    .findViewById(R.id.ingredients_listview);
 	    mListView.setAdapter(new ArrayAdapter<String>(mContext,
-		    R.layout.listitem, completeIngredients));
+		    R.layout.listitem, ingredientStrings));
 
 	    return v;
 	}

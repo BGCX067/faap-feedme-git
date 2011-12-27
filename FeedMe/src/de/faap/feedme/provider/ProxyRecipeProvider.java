@@ -1,17 +1,19 @@
 package de.faap.feedme.provider;
 
+import static de.faap.feedme.util.Ingredient.Unit.count;
+import static de.faap.feedme.util.Ingredient.Unit.g;
+import static de.faap.feedme.util.Ingredient.Unit.ml;
+import static de.faap.feedme.util.Recipe.Effort.instant;
+import static de.faap.feedme.util.Recipe.Effort.large;
+import static de.faap.feedme.util.Recipe.Effort.small;
+
 import java.util.HashMap;
 import java.util.Map;
 
 import android.content.Context;
+import de.faap.feedme.util.Ingredient;
 import de.faap.feedme.util.Recipe;
 
-/**
- * Singleton pattern.
- * 
- * @author joe
- * 
- */
 public class ProxyRecipeProvider implements IRecipeProvider {
 
     private static final ProxyRecipeProvider instance = new ProxyRecipeProvider();
@@ -24,17 +26,17 @@ public class ProxyRecipeProvider implements IRecipeProvider {
 	map = new HashMap<String, Recipe>();
 	// TODO mock sachen entfernen
 	int portions = 2;
-	double[] quantities = { 1, 2, 500 };
-	String[] units = { "", "l", "g" };
+	double[] quantities = { 1, 2000, 500 };
+	Ingredient.Unit[] units = { count, ml, g };
 	String[] ingredients = { "Ei", "Wasser", "Mehl" };
 	String preperation = "Zusammenmischen, 10min in Pfanne, namnamnam";
 
 	Recipe r0 = new Recipe("0", portions, quantities, units, ingredients,
-		preperation);
+		preperation, small);
 	Recipe r1 = new Recipe("1", portions, quantities, units, ingredients,
-		preperation);
+		preperation, large);
 	Recipe r2 = new Recipe("2", portions, quantities, units, ingredients,
-		preperation);
+		preperation, instant);
 
 	map.put("0", r0);
 	map.put("1", r1);

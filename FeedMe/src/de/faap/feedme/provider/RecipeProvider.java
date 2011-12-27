@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import de.faap.feedme.R;
+import de.faap.feedme.util.Ingredient;
 import de.faap.feedme.util.Recipe;
 
 public class RecipeProvider implements IRecipeProvider {
@@ -24,6 +25,8 @@ public class RecipeProvider implements IRecipeProvider {
 	String[] units;
 	String[] ingredients;
 	String preperation;
+	String effortFromDB = "small"; // FIXME: faltermj read value from DB and
+				       // remove default
 
 	int _id;
 
@@ -63,9 +66,14 @@ public class RecipeProvider implements IRecipeProvider {
 	    units[i] = complexRecipeData.getString(2);
 	}
 
+	Ingredient.Unit[] internalUnits = new Ingredient.Unit[units.length];
+	for (int i = 0; i < units.length; i++) {
+	    internalUnits[i] = Ingredient.Unit.valueOf(units[i]);
+	}
+
 	db.close();
-	return new Recipe(name, portions, quantities, units, ingredients,
-		preperation);
+	return new Recipe(name, portions, quantities, internalUnits,
+		ingredients, preperation, Recipe.Effort.valueOf(effortFromDB));
     }
 
     @Override
