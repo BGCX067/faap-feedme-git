@@ -92,15 +92,15 @@ public class Recipe {
 	return cuisines.toArray(new String[cuisines.size()]);
     }
 
-    public boolean addCategory(String category) {
+    public boolean addType(String type) {
 	if (categories == null) {
 	    categories = new HashSet<String>();
 	}
 
-	if (categories.contains(category))
+	if (categories.contains(type))
 	    return false;
 
-	categories.add(category);
+	categories.add(type);
 	return true;
     }
 
