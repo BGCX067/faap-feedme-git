@@ -20,8 +20,12 @@ public class Recipe {
 
     private HashSet<Ingredient> ingredients = new HashSet<Ingredient>();
 
+    private HashSet<String> cuisines = null;
+
+    private HashSet<String> categories = null;
+
     public Recipe(String name, int portions, double[] quantities, Unit[] units,
-	    String[] ingredientNames, String preperation, Effort effort) {
+	    String[] ingredientNames, String preperation) {
 	this.name = name;
 	this.portions = portions;
 	// this.quantities = quantities;
@@ -66,8 +70,44 @@ public class Recipe {
 	return addIngredient(newIngredient);
     }
 
-    public void setPreperation(String preperation) {
-	this.preparation = preperation;
+    public void setPreparation(String preparation) {
+	this.preparation = preparation;
+    }
+
+    public boolean addCuisine(String cuisine) {
+	if (cuisines == null) {
+	    cuisines = new HashSet<String>();
+	}
+
+	if (cuisines.contains(cuisine))
+	    return false;
+
+	cuisines.add(cuisine);
+	return true;
+    }
+
+    public String[] getCuisines() {
+	if (cuisines.isEmpty())
+	    return null;
+	return cuisines.toArray(new String[cuisines.size()]);
+    }
+
+    public boolean addCategory(String category) {
+	if (categories == null) {
+	    categories = new HashSet<String>();
+	}
+
+	if (categories.contains(category))
+	    return false;
+
+	categories.add(category);
+	return true;
+    }
+
+    public String[] getCategories() {
+	if (categories == null)
+	    return null;
+	return categories.toArray(new String[categories.size()]);
     }
 
     public Effort getEffort() {
@@ -94,7 +134,7 @@ public class Recipe {
     // return ingredients;
     // }
 
-    public String getPreperation() {
+    public String getPreparation() {
 	return preparation;
     }
 

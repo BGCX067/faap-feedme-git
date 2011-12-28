@@ -25,8 +25,7 @@ public class RecipeProvider implements IRecipeProvider {
 	String[] units;
 	String[] ingredients;
 	String preperation;
-	String effortFromDB = "small"; // FIXME: faltermj read value from DB and
-				       // remove default
+	// String effortFromDB = "small";
 
 	int _id;
 
@@ -73,7 +72,7 @@ public class RecipeProvider implements IRecipeProvider {
 
 	db.close();
 	return new Recipe(name, portions, quantities, internalUnits,
-		ingredients, preperation, Recipe.Effort.valueOf(effortFromDB));
+		ingredients, preperation);
     }
 
     @Override

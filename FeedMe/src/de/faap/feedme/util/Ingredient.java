@@ -25,14 +25,19 @@ public class Ingredient {
 	this.quantity *= factor;
     }
 
-    @Override
-    public String toString() {
+    public String getReadableUnit() {
 	String unitString;
 	if (unit.equals(Unit.count) || unit.equals(Unit.none))
 	    unitString = "";
 	else
 	    unitString = unit.toString();
-	return quantity + unitString + " " + name;
+	return unitString;
+    }
+
+    @Override
+    public String toString() {
+
+	return quantity + getReadableUnit() + " " + name;
     }
 
     @Override

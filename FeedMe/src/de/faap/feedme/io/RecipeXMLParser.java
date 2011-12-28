@@ -169,6 +169,15 @@ public class RecipeXMLParser {
 					+ currentIngredient.name + " (Line: "
 					+ pullParser.getLineNumber() + ").");
 		    }
+		    break;
+		case cuisine:
+		    if (!newRecipe.addCuisine(pullParser.getText())) {
+			throw new IllegalArgumentException("Duplicate cuisine "
+				+ pullParser.getText() + " (Line: "
+				+ pullParser.getLineNumber() + ").");
+		    }
+		    break;
+
 		}
 		// FIXME: complete parsing
 	    }
@@ -197,6 +206,6 @@ public class RecipeXMLParser {
 	return (newRecipe.getIngredients().length >= 1
 		&& newRecipe.getName() != null
 		&& newRecipe.getName().length() >= 1
-		&& newRecipe.getPortions() != -1 && newRecipe.getPreperation() != null);
+		&& newRecipe.getPortions() != -1 && newRecipe.getPreparation() != null);
     }
 }

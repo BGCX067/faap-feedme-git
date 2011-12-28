@@ -168,7 +168,7 @@ public class PreperationActivity extends ActionBarActivity {
 		Bundle savedInstanceState) {
 	    View v = inflater.inflate(R.layout.prepdetails, container, false);
 	    TextView mTextView = (TextView) v.findViewById(R.id.prep_textview);
-	    mTextView.setText(recipe.getPreperation());
+	    mTextView.setText(recipe.getPreparation());
 	    return v;
 	}
     }

@@ -3,9 +3,6 @@ package de.faap.feedme.provider;
 import static de.faap.feedme.util.Ingredient.Unit.count;
 import static de.faap.feedme.util.Ingredient.Unit.g;
 import static de.faap.feedme.util.Ingredient.Unit.ml;
-import static de.faap.feedme.util.Recipe.Effort.instant;
-import static de.faap.feedme.util.Recipe.Effort.large;
-import static de.faap.feedme.util.Recipe.Effort.small;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,11 +29,11 @@ public class ProxyRecipeProvider implements IRecipeProvider {
 	String preperation = "Zusammenmischen, 10min in Pfanne, namnamnam";
 
 	Recipe r0 = new Recipe("0", portions, quantities, units, ingredients,
-		preperation, small);
+		preperation);
 	Recipe r1 = new Recipe("1", portions, quantities, units, ingredients,
-		preperation, large);
+		preperation);
 	Recipe r2 = new Recipe("2", portions, quantities, units, ingredients,
-		preperation, instant);
+		preperation);
 
 	map.put("0", r0);
 	map.put("1", r1);
