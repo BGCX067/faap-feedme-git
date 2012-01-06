@@ -9,6 +9,12 @@ public class Ingredient {
 	ml, g, count, none
     }
 
+    public Ingredient() {
+	quantity = Double.NaN;
+	unit = null;
+	name = null;
+    }
+
     public Ingredient(double quantity, Unit unit, String name) {
 	this.quantity = quantity;
 	this.unit = unit;
