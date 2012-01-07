@@ -40,10 +40,16 @@ public class Ingredient {
 	return unitString;
     }
 
+    private String getReadableQuantity() {
+	if (quantity == 0 && unit.equals(Unit.none))
+	    return "";
+
+	return String.valueOf(quantity); // TODO: use nice format
+    }
+
     @Override
     public String toString() {
-
-	return quantity + getReadableUnit() + " " + name;
+	return getReadableQuantity() + getReadableUnit() + " " + name;
     }
 
     @Override

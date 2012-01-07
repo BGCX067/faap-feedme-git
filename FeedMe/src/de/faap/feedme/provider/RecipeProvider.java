@@ -34,8 +34,8 @@ public class RecipeProvider implements IRecipeProvider {
 
 	// query to get _id, preperation and portions
 	Cursor simpleRecipeData = db.rawQuery("SELECT _id,preperation,portion "
-		+ "FROM " + RecipeDatabaseHelper.TABLE_RECIPES + " "
-		+ "WHERE name = ? ", new String[] { name });
+		+ "FROM " + RecipeDatabaseHelper.Tables.Recipes.toString()
+		+ " " + "WHERE name = ? ", new String[] { name });
 
 	_id = simpleRecipeData.getInt(0);
 	preperation = simpleRecipeData.getString(1);

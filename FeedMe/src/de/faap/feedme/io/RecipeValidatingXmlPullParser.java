@@ -29,9 +29,10 @@ public class RecipeValidatingXmlPullParser implements XmlPullParser {
     private boolean startNext = true;
     private boolean endNext = false;
     private ValidNextTags nextText = null;
+    private boolean inIngredient = false;
 
     enum ValidNextTags {
-	recipes, recipe, name, type, preparation, cuisine, ingredient, amount, text
+	recipes, recipe, name, type, preparation, portions, cuisine, ingredient, amount, text
 
     }
 
@@ -175,7 +176,8 @@ public class RecipeValidatingXmlPullParser implements XmlPullParser {
 	case cuisine:
 	    // remove line feeds and tabs
 	    text = text.replaceAll("(\\n|\\r|\\t)+", " ");
-	    Log.d("faap.feedme.xmlparse", "Type/Cuisine normalized: " + text);
+	    Log.d("faap.feedme.xmlparse", "Type/Cuisine normalized: '" + text
+		    + "'");
 	    break;
 	case name:
 	    // remove any blocks of whitespace (including multispace and
@@ -186,7 +188,10 @@ public class RecipeValidatingXmlPullParser implements XmlPullParser {
 		xmlTokenString.append(' ');
 	    }
 	    text = xmlTokenString.toString().trim();
-	    Log.d("faap.feedme.xmlparse", "Name tokenized: " + text);
+	    Log.d("faap.feedme.xmlparse", "Name tokenized: '" + text + "'");
+	    break;
+	default:
+	    text = text.trim();
 	}
 
 	return text;
@@ -250,6 +255,7 @@ public class RecipeValidatingXmlPullParser implements XmlPullParser {
 		nextText = null;
 		expected.remove(ValidNextTags.recipes); // closing recipes not
 							// allowed anymore
+		expected.add(ValidNextTags.name);
 
 		// check if the attribute has a legal format
 		if (parser.getAttributeCount() != 1
@@ -265,7 +271,8 @@ public class RecipeValidatingXmlPullParser implements XmlPullParser {
 		startNext = true;
 		nextText = null;
 		expected.clear();
-		expected.add(ValidNextTags.amount);
+		expected.add(ValidNextTags.name);
+		inIngredient = true;
 		break;
 	    case amount:
 		// it is legal to not give a unit explicitely, as there is a
@@ -280,13 +287,16 @@ public class RecipeValidatingXmlPullParser implements XmlPullParser {
 				    + Arrays.toString(Ingredient.Unit.values())
 				    + "(Line: " + parser.getLineNumber() + ").");
 		}
-		try {
-		    Ingredient.Unit.valueOf(parser.getAttributeValue(0));
-		} catch (IllegalArgumentException e) {
-		    throw new XmlPullParserException(
-			    "Illegal unit type! Types are: "
-				    + Arrays.toString(Ingredient.Unit.values())
-				    + "(Line: " + parser.getLineNumber() + ").");
+		if (parser.getAttributeCount() == 1) {
+		    try {
+			Ingredient.Unit.valueOf(parser.getAttributeValue(0));
+		    } catch (IllegalArgumentException e) {
+			throw new XmlPullParserException(
+				"Illegal unit type! Types are: "
+					+ Arrays.toString(Ingredient.Unit
+						.values()) + "(Line: "
+					+ parser.getLineNumber() + ").");
+		    }
 		}
 		break;
 	    }
@@ -322,29 +332,38 @@ public class RecipeValidatingXmlPullParser implements XmlPullParser {
 		break;
 	    case name:
 		expected.remove(ValidNextTags.name);
-		expected.add(ValidNextTags.type);
+		if (inIngredient) {
+		    expected.add(ValidNextTags.amount);
+		} else {
+		    expected.add(ValidNextTags.type);
+		}
 		break;
 	    case type:
+		expected.remove(ValidNextTags.type);
 		expected.add(ValidNextTags.cuisine);
 		break;
 	    case cuisine:
 		expected.add(ValidNextTags.preparation);
-		expected.remove(ValidNextTags.type);
 		break;
 	    case preparation:
 		expected.remove(ValidNextTags.cuisine);
 		expected.remove(ValidNextTags.preparation);
-		expected.add(ValidNextTags.ingredient);
+		expected.add(ValidNextTags.portions);
 		break;
+	    case portions:
+		expected.remove(ValidNextTags.portions);
+		expected.add(ValidNextTags.ingredient);
 	    case amount:
 		expected.remove(ValidNextTags.amount);
 		expected.add(ValidNextTags.ingredient);
 		startNext = false;
 		endNext = true;
+		break;
 	    case ingredient:
 		expected.add(ValidNextTags.recipe);
 		startNext = true;
 		endNext = true;
+		inIngredient = false;
 		break;
 	    }
 	} else if (event == XmlPullParser.TEXT) {
@@ -373,23 +392,56 @@ public class RecipeValidatingXmlPullParser implements XmlPullParser {
 		}
 		break;
 	    }
+	    startNext = false;
+	    endNext = true;
 	}
 	return event;
     }
 
     @Override
     public int nextTag() throws XmlPullParserException, IOException {
-	return parser.nextTag();
+	int eventType = next();
+	if (eventType == TEXT && isWhitespace()) { // skip whitespace
+	    eventType = next();
+	    assert false; // should never hit, actually, as next already skips
+			  // whitespace
+	}
+	if (eventType != START_TAG && eventType != END_TAG) {
+	    throw new XmlPullParserException("expected start or end tag", this,
+		    null);
+	}
+	return eventType;
+
     }
 
     @Override
     public String nextText() throws XmlPullParserException, IOException {
-	return parser.nextText();
+	if (parser.getEventType() != START_TAG) {
+	    throw new XmlPullParserException(
+		    "parser must be on START_TAG to read next text");
+	}
+	int eventType = next();
+	if (eventType == TEXT) {
+	    String result = getText();
+	    eventType = next();
+	    if (eventType != END_TAG) {
+		throw new XmlPullParserException(
+			"event TEXT it must be immediately followed by END_TAG");
+	    }
+	    return result;
+	} else if (eventType == END_TAG) {
+	    return "";
+	} else {
+	    throw new XmlPullParserException(
+		    "parser must be on START_TAG or TEXT to read text");
+	}
+
     }
 
     @Override
     public int nextToken() throws XmlPullParserException, IOException {
-	return parser.nextToken();
+	throw new UnsupportedOperationException("Not supported.");
+	// return parser.nextToken();
     }
 
     @Override

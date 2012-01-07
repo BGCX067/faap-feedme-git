@@ -20,7 +20,7 @@ public class Recipe {
 
     private HashSet<Ingredient> ingredients = new HashSet<Ingredient>();
 
-    private HashSet<String> cuisines = null;
+    private String cuisine = null;
 
     private HashSet<String> categories = null;
 
@@ -74,22 +74,12 @@ public class Recipe {
 	this.preparation = preparation;
     }
 
-    public boolean addCuisine(String cuisine) {
-	if (cuisines == null) {
-	    cuisines = new HashSet<String>();
-	}
-
-	if (cuisines.contains(cuisine))
-	    return false;
-
-	cuisines.add(cuisine);
-	return true;
+    public void setCuisine(String cuisine) {
+	this.cuisine = cuisine;
     }
 
-    public String[] getCuisines() {
-	if (cuisines.isEmpty())
-	    return null;
-	return cuisines.toArray(new String[cuisines.size()]);
+    public String getCuisine() {
+	return cuisine;
     }
 
     public boolean addType(String type) {
@@ -164,4 +154,26 @@ public class Recipe {
 	return true;
     }
 
+    @Override
+    public String toString() {
+	StringBuilder recipeString = new StringBuilder();
+
+	recipeString.append(getName() + "(" + getPortions() + "P)\n");
+	recipeString.append("types: ");
+	for (String cat : getCategories()) {
+	    recipeString.append(cat + ",");
+	}
+	recipeString.deleteCharAt(recipeString.length() - 1); // remove ','
+	recipeString.append("\n");
+	recipeString.append("Cuisine: ");
+	recipeString.append(cuisine + "\n");
+
+	recipeString.append("Ingredients:\n");
+	for (Ingredient ing : getIngredients()) {
+	    recipeString.append(ing + "\n");
+	}
+	recipeString.append("Preparation:\n");
+	recipeString.append(getPreparation() + "\n");
+	return recipeString.toString();
+    }
 }

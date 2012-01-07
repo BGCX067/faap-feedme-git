@@ -18,9 +18,11 @@ public class RecipeReceiver implements IRecipeReceiver {
     }
 
     @Override
-    public void addTable(String tableName, ContentValues values) {
+    public void addTable(String tableName, ContentValues[] valuesTable) {
 	if (db.isOpen()) {
-	    db.insert(tableName, null, values);
+	    for (ContentValues values : valuesTable) {
+		db.insert(tableName, null, values);
+	    }
 	}
     }
 

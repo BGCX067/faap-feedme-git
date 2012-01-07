@@ -5,14 +5,17 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 import android.content.ContentValues;
 import android.util.Log;
+import de.faap.feedme.provider.RecipeDatabaseHelper;
 import de.faap.feedme.util.Ingredient;
 import de.faap.feedme.util.Recipe;
 import de.faap.feedme.util.Recipe.Effort;
@@ -25,20 +28,16 @@ public class RecipeXMLParser {
 
     HashSet<String> recipeNames = new HashSet<String>();
 
-    HashSet<String> ingredientNames = new HashSet<String>();
-
-    HashSet<String> categories = new HashSet<String>();
-
-    HashSet<String> cuisines = new HashSet<String>();
+    ArrayList<Recipe> recipes = new ArrayList<Recipe>();
 
     private ParseStates state = ParseStates.BEGIN;
 
     private enum ParseStates {
-	BEGIN, IN_RECIPES, IR_BEGIN_NAME_NEXT, IR_TYPES, IR_CUISINES, IR_PREPARATION, IR_INGREDIENTS, II_NAME, II_AMOUNT, II_END, IN_INNERMOST, END
+	BEGIN, IN_RECIPES, IR_BEGIN_NAME_NEXT, IR_TYPES, IR_CUISINES, IR_PREPARATION, IR_INGREDIENTS, II_NAME, II_AMOUNT, II_END, IN_INNERMOST, END, IR_PORTIONS
     }
 
     enum ValidTags {
-	recipes, recipe, name, type, preparation, cuisine, ingredient, amount
+	recipes, recipe, name, type, preparation, portions, cuisine, ingredient, amount
 
     }
 
@@ -52,12 +51,195 @@ public class RecipeXMLParser {
 	effort, unit
     }
 
+    private HashMap<String, ContentValues> ingredientsTable = new HashMap<String, ContentValues>();
+    private HashMap<String, ContentValues> categoriesTable = new HashMap<String, ContentValues>();
+    private HashMap<String, ContentValues> cuisinesTable = new HashMap<String, ContentValues>();
+    private HashMap<String, ContentValues> effortsTable = new HashMap<String, ContentValues>();
+    private HashMap<String, ContentValues> unitsTable = new HashMap<String, ContentValues>();
+
+    private ArrayList<ContentValues> recipesTable = new ArrayList<ContentValues>();
+    private ArrayList<ContentValues> ingredientsRecipeTable = new ArrayList<ContentValues>();
+    private ArrayList<ContentValues> categoriesRecipeTable = new ArrayList<ContentValues>();
+
     public boolean reparseRecipeDatabase() {
-	return parseXMLFile(FILE_PATH);
+	boolean parseSuccess = parseXMLFile(FILE_PATH);
+	if (!parseSuccess)
+	    return false;
+
+	// now create data sets
+
+	int referenceKey;
+	Recipe recipe;
+	for (int i = 0; i < recipes.size(); i++) {
+	    recipe = recipes.get(i);
+	    ContentValues recipesTableEntry = new ContentValues(5);
+	    // set cuisine
+	    referenceKey = pushCuisine(recipe.getCuisine(), cuisinesTable);
+	    recipesTableEntry.put(ValidTags.cuisine.toString(), referenceKey);
+
+	    // set effort
+	    referenceKey = pushEffort(recipe.getEffort(), effortsTable);
+	    recipesTableEntry.put(ValidAttributes.effort.toString(),
+		    referenceKey);
+
+	    // set portions
+	    recipesTableEntry.put(ValidTags.portions.toString(),
+		    recipe.getPortions());
+
+	    // set preparation
+	    recipesTableEntry.put(ValidTags.preparation.toString(),
+		    recipe.getPreparation());
+
+	    // set categories
+	    ContentValues categoriesRecipeTableEntry = new ContentValues();
+	    for (String category : recipe.getCategories()) {
+		referenceKey = pushCategory(category, categoriesTable);
+		categoriesRecipeTableEntry.put(ValidTags.recipe.toString(), i);
+		categoriesRecipeTableEntry.put(ValidTags.type.toString(),
+			referenceKey);
+		categoriesRecipeTable.add(categoriesRecipeTableEntry);
+	    }
+
+	    // set ingredients
+	    ContentValues ingredientsRecipeTableEntry = new ContentValues();
+	    for (Ingredient ingredient : recipe.getIngredients()) {
+		referenceKey = pushIngredient(ingredient, ingredientsTable,
+			unitsTable);
+		ingredientsRecipeTableEntry.put(ValidTags.recipe.toString(), i);
+		ingredientsRecipeTableEntry.put(
+			ValidTags.ingredient.toString(), referenceKey);
+		ingredientsRecipeTableEntry.put(ValidTags.amount.toString(),
+			ingredient.quantity);
+		ingredientsRecipeTable.add(ingredientsRecipeTableEntry);
+	    }
+
+	    recipesTable.add(recipesTableEntry);
+
+	}
+
+	return true;
     }
 
-    public ContentValues getValuesForTable(String table) {
+    private int pushIngredient(Ingredient ingredient,
+	    Map<String, ContentValues> ingredientsTable,
+	    Map<String, ContentValues> unitsTable)
+	    throws IllegalArgumentException {
+	if (ingredientsTable.containsKey(ingredient.name)) {
+	    // check if the units match
+	    ContentValues storedIngredient = ingredientsTable
+		    .get(ingredient.name);
+	    int storedUnitKey = storedIngredient
+		    .getAsInteger(ValidAttributes.unit.toString());
+	    Ingredient.Unit storedUnit = getUnitForKey(storedUnitKey,
+		    unitsTable);
+	    if (!storedUnit.equals(ingredient.unit)) {
+		throw new IllegalArgumentException(
+			"Ingredients with the same name, must have the same unit-type. "
+				+ ingredient.name + " has "
+				+ ingredient.unit.toString() + " as well as "
+				+ storedUnit.toString());
+	    }
+	    return ingredientsTable.get(ingredient.name).getAsInteger("key");
+	}
+	ContentValues entry = new ContentValues(3);
+	int unitKey = putUnit(ingredient.unit, unitsTable);
+	entry.put("key", ingredientsTable.size());
+	entry.put(ValidTags.name.toString(), ingredient.name.toString());
+	entry.put(ValidAttributes.unit.toString(), unitKey);
+	ingredientsTable.put(ingredient.name, entry);
+	return 0;
+    }
+
+    private int putUnit(Ingredient.Unit unit,
+	    Map<String, ContentValues> unitsTable) {
+	if (unitsTable.containsKey(unit.toString())) {
+	    return unitsTable.get(unit.toString()).getAsInteger("key");
+	}
+
+	ContentValues entry = new ContentValues(2);
+	entry.put("key", unitsTable.size());
+	entry.put(ValidTags.name.toString(), unit.toString());
+	unitsTable.put(unit.toString(), entry);
+	return unitsTable.size() - 1;
+    }
+
+    private Ingredient.Unit getUnitForKey(int key,
+	    Map<String, ContentValues> unitsTable) {
+	for (ContentValues unitRecord : unitsTable.values()) {
+	    if (unitRecord.getAsInteger("key") == key) {
+		return Ingredient.Unit.valueOf(unitRecord
+			.getAsString(ValidTags.name.toString()));
+	    }
+	}
 	return null;
+    }
+
+    private int pushCategory(String category,
+	    Map<String, ContentValues> categoriesTable) {
+	if (categoriesTable.containsKey(category)) {
+	    return categoriesTable.get(category).getAsInteger("key");
+	}
+
+	ContentValues entry = new ContentValues(2);
+	entry.put("key", categoriesTable.size());
+	entry.put(ValidTags.name.toString(), category);
+	categoriesTable.put(category, entry);
+	return categoriesTable.size() - 1;
+    }
+
+    private int pushEffort(Effort effort,
+	    Map<String, ContentValues> effortsTable) {
+	if (effortsTable.containsKey(effort.toString())) {
+	    return effortsTable.get(effort.toString()).getAsInteger("key");
+	}
+
+	ContentValues entry = new ContentValues(2);
+	entry.put("key", effortsTable.size());
+	entry.put(ValidTags.name.toString(), effort.toString());
+	effortsTable.put(effort.toString(), entry);
+	return effortsTable.size() - 1;
+    }
+
+    private int pushCuisine(String cuisine,
+	    Map<String, ContentValues> cuisinesTable) {
+	if (cuisinesTable.containsKey(cuisine)) {
+	    return cuisinesTable.get(cuisine).getAsInteger("key");
+	}
+
+	ContentValues entry = new ContentValues(2);
+	entry.put("key", cuisinesTable.size());
+	entry.put(ValidTags.name.toString(), cuisine);
+	cuisinesTable.put(cuisine, entry);
+	return cuisinesTable.size() - 1;
+    }
+
+    public ContentValues[] getValuesForTable(RecipeDatabaseHelper.Tables table) {
+	switch (table) {
+	case Recipes:
+	    return recipesTable.toArray(new ContentValues[recipesTable.size()]);
+	case Categories:
+	    return categoriesRecipeTable
+		    .toArray(new ContentValues[categoriesRecipeTable.size()]);
+	case Cuisine:
+	    return cuisinesTable.values().toArray(
+		    new ContentValues[cuisinesTable.size()]);
+	case Effort:
+	    return effortsTable.values().toArray(
+		    new ContentValues[effortsTable.size()]);
+	case Ingredients:
+	    return ingredientsTable.values().toArray(
+		    new ContentValues[ingredientsTable.size()]);
+	case One_takes:
+	    return ingredientsRecipeTable
+		    .toArray(new ContentValues[ingredientsRecipeTable.size()]);
+	case Type:
+	    return categoriesTable.values().toArray(
+		    new ContentValues[categoriesTable.size()]);
+	default:
+	    assert false;
+	    return null;
+	}
+
     }
 
     private boolean parseXMLFile(String name) {
@@ -79,18 +261,13 @@ public class RecipeXMLParser {
     private boolean parseStream(InputStream input) {
 
 	try {
-
-	    // factory.setValidating(true); //currently not supported
 	    XmlPullParser pullParser = XmlValidatingParserFactory
 		    .newValidatingParser(SCHEMA_PATH);
 	    pullParser.setInput(input, "UTF-8");
-	    pullParser.next(); // skip start document
-	    int eventType = pullParser.getEventType();
+
+	    int eventType = pullParser.next(); // skip start document
+
 	    while (eventType != XmlPullParser.END_DOCUMENT) {
-		checkXMLSchemaConform(pullParser);
-		eventType = pullParser.getEventType(); // here, as the
-						       // check-routine might
-						       // change the eventType
 		switch (eventType) {
 		case XmlPullParser.START_TAG:
 		    System.out.println("Start: " + pullParser.getName());
@@ -101,7 +278,7 @@ public class RecipeXMLParser {
 			break;
 		    case recipe:
 			Recipe parsedRecipe = parseRecipe(pullParser);
-			addRecipe(parsedRecipe);
+			addRecipeToData(parsedRecipe);
 			break;
 		    default:
 			throw getStandardParseException(pullParser);
@@ -111,14 +288,14 @@ public class RecipeXMLParser {
 		    System.out.println("End: " + pullParser.getName());
 		    break;
 		}
-		pullParser.next();
+		eventType = pullParser.next();
 	    }
 	} catch (IllegalArgumentException e) {
 	    Log.d(LOG_TAG,
 		    "Illegal XML Tag in recipe: " + e.getLocalizedMessage());
 	    return false;
 	} catch (XmlPullParserException e1) {
-	    // TODO Auto-generated catch block
+	    Log.e(LOG_TAG, "Could not parse the recipe file. See stack trace.");
 	    e1.printStackTrace();
 	    return false;
 
@@ -131,152 +308,8 @@ public class RecipeXMLParser {
 	return true;
     }
 
-    private void addRecipe(Recipe parsedRecipe) {
-
-    }
-
-    /**
-     * This method checks if the current tag would be allowed if the xml were
-     * evaluated against the recipe.xsd schema file. It also checks if the data
-     * type is valid. This method hopefully becomes obsolete soon, when a
-     * validating parser becomes available for android. It might also be
-     * obsolete when the validation is guaranteed elsewhere.
-     * 
-     * 
-     * @param parser
-     * @throws IllegalArgumentException
-     * @throws XmlPullParserException
-     */
-    private void checkXMLSchemaConform(XmlPullParser pullParser)
-	    throws IllegalArgumentException, XmlPullParserException {
-	if (pullParser.getEventType() == XmlPullParser.START_TAG) {
-	    ValidTags tag = ValidTags.valueOf(pullParser.getName());
-	    if (!openingTagAllowed) {
-		throw getStandardParseException(pullParser);
-	    }
-	    switch (tag) {
-	    case recipes:
-		if (!state.equals(ParseStates.BEGIN)) {
-		    throw getStandardParseException(pullParser);
-		}
-		break;
-	    case recipe:
-		if (!state.equals(ParseStates.IN_RECIPES)) {
-		    throw getStandardParseException(pullParser);
-		}
-		if (pullParser.getAttributeCount() != 1
-			|| !pullParser.getAttributeName(0).equals(
-				ValidAttributes.effort.toString())) {
-
-		    throw new IllegalArgumentException(
-			    "Each recipe needs to have an effort! Types are: "
-				    + Arrays.toString(Effort.values())
-				    + "(Line: " + pullParser.getLineNumber()
-				    + ").");
-		}
-		try {
-		    Recipe.Effort.valueOf(pullParser.getAttributeValue(0));
-		} catch (IllegalArgumentException e) {
-		    throw new IllegalArgumentException(
-			    "Illegal effort type! Types are: "
-				    + Arrays.toString(Effort.values())
-				    + "(Line: " + pullParser.getLineNumber()
-				    + ").");
-		}
-		break;
-	    case name:
-		openingTagAllowed = false;
-		if (!(state.equals(ParseStates.IR_BEGIN_NAME_NEXT) || state
-			.equals(ParseStates.II_NAME))) {
-		    throw getStandardParseException(pullParser);
-		}
-		break;
-	    case type:
-		openingTagAllowed = false;
-		hadType = true;
-		if (!state.equals(ParseStates.IR_TYPES)) {
-		    throw getStandardParseException(pullParser);
-		}
-		// state stays the same, as there may be more than one types
-		break;
-	    case cuisine:
-		openingTagAllowed = false;
-		if (!(state.equals(ParseStates.IR_TYPES) || state
-			.equals(ParseStates.IR_CUISINES)) || !hadType) {
-		    throw getStandardParseException(pullParser);
-		}
-		break;
-	    case preparation:
-		openingTagAllowed = false;
-		if (!state.equals(ParseStates.IR_PREPARATION)) {
-		    throw getStandardParseException(pullParser);
-		}
-		break;
-	    case ingredient:
-		openingTagAllowed = true;
-		if (!state.equals(ParseStates.IR_INGREDIENTS)) {
-		    throw getStandardParseException(pullParser);
-		}
-		break;
-	    case amount:
-		openingTagAllowed = false;
-		if (!state.equals(ParseStates.II_AMOUNT)) {
-		    throw getStandardParseException(pullParser);
-		}
-		if (pullParser.getAttributeCount() != 1
-			|| !pullParser.getAttributeName(0).equals(
-				ValidAttributes.unit.toString())) {
-		    assert false; // standard value given, this should not be
-				  // possible
-		}
-		try {
-		    Ingredient.Unit.valueOf(pullParser.getAttributeValue(0));
-		} catch (IllegalArgumentException e) {
-		    throw new IllegalArgumentException(
-			    "Illegal unit type! Types are: "
-				    + Arrays.toString(Ingredient.Unit.values())
-				    + "(Line: " + pullParser.getLineNumber()
-				    + ").");
-		}
-		break;
-	    }
-	} else if (pullParser.getEventType() == XmlPullParser.TEXT) {
-	    if (openingTagAllowed) {
-		// no real text should come now, whitespace allowed and skipped
-		if (!pullParser.isWhitespace()) {
-		    throw new IllegalArgumentException(
-			    "Only whitespace is allowed between these tags, but was: '"
-				    + pullParser.getText() + "' (Line: "
-				    + pullParser.getLineNumber() + ").");
-
-		}
-		try {
-		    pullParser.next();
-		} catch (IOException e) {
-		    Log.d(LOG_TAG,
-			    "Unexpected excpetion while skipping whitespace!");
-		    e.printStackTrace();
-		} // skip whitespace
-	    }
-	    // check if text has right format
-	    switch (state) {
-	    case II_AMOUNT:
-		try {
-		    Double.valueOf(pullParser.getText());
-		} catch (NumberFormatException e) {
-		    throw new IllegalArgumentException(
-			    "The amount value needs to be a decimal value"
-				    + "(Line: " + pullParser.getLineNumber()
-				    + ").");
-		}
-		break;
-	    }
-	} else if (pullParser.getEventType() == XmlPullParser.END_TAG) {
-	    ValidTags tag = ValidTags.valueOf(pullParser.getName());
-	    if (!tag.equals(ValidTags.amount))
-		openingTagAllowed = true;
-	}
-
+    private void addRecipeToData(Recipe recipe) {
+	recipes.add(recipe);
     }
 
     private IllegalArgumentException getStandardParseException(
@@ -308,17 +341,13 @@ public class RecipeXMLParser {
 	    newRecipe = new Recipe(pullParser.getName());
 	    newRecipe
 		    .setEffort(Effort.valueOf(pullParser.getAttributeValue(0)));
-	    pullParser.next();
-	    eventType = pullParser.getEventType();
+	    eventType = pullParser.next();
 	    state = ParseStates.IR_BEGIN_NAME_NEXT;
 
 	    ValidTags currentTag;
 	    Ingredient currentIngredient;
 	    while (!(eventType == XmlPullParser.END_TAG && pullParser.getName()
 		    .equals(ValidTags.recipe.toString()))) {
-		checkXMLSchemaConform(pullParser);
-		eventType = pullParser.getEventType(); // set here, as the check
-						       // might change the type
 		if (eventType == XmlPullParser.START_TAG) {
 		    currentTag = ValidTags.valueOf(pullParser.getName());
 		    switch (currentTag) {
@@ -347,11 +376,9 @@ public class RecipeXMLParser {
 			break;
 		    case preparation:
 			state = ParseStates.IR_PREPARATION;
-			assert newRecipe.getPreparation() == null; // "xml schema validation"
-								   // guarantees
-								   // uniqueness
-			newRecipe.setPreparation(pullParser.getText());
 			break;
+		    case portions:
+			state = ParseStates.IR_PORTIONS;
 		    default:
 			throw new IllegalStateException("Illegal parse state!");
 		    }
@@ -359,16 +386,22 @@ public class RecipeXMLParser {
 		    switch (state) {
 		    case IR_BEGIN_NAME_NEXT:
 			assert newRecipe.getName() == null; // xml schema
-			// validation guarantuees uniqueneness
+			// validation guarantuees uniqueneness (of name per
+			// recipe)
+			// now check global uniqueness of recipe names
 			newRecipe.setName(pullParser.getText());
-			break;
-		    case IR_CUISINES:
-			if (!newRecipe.addCuisine(pullParser.getText())) {
+			if (recipeNames.contains(newRecipe.getName())) {
 			    throw new IllegalArgumentException(
-				    "Duplicate cuisine " + pullParser.getText()
-					    + " (Line: "
+				    "Duplicate recipe name "
+					    + newRecipe.getName() + " (Line: "
 					    + pullParser.getLineNumber() + ").");
 			}
+			recipeNames.add(newRecipe.getName());
+			break;
+		    case IR_CUISINES:
+			assert newRecipe.getCuisine() == null; // validation
+							       // invariant
+			newRecipe.setCuisine(pullParser.getText());
 			break;
 		    case IR_TYPES:
 			if (!newRecipe.addType(pullParser.getText())) {
@@ -384,6 +417,11 @@ public class RecipeXMLParser {
 								   // uniqueness
 			newRecipe.setPreparation(pullParser.getText());
 			break;
+		    case IR_PORTIONS:
+			assert newRecipe.getPortions() == -1;
+			newRecipe.setPortions(Integer.valueOf(pullParser
+				.getText()));
+			break;
 		    default:
 			throw new IllegalStateException("Illegal parse state.");
 		    }
@@ -397,7 +435,7 @@ public class RecipeXMLParser {
 			state = ParseStates.IR_INGREDIENTS;
 		    }
 		}
-		pullParser.next();
+		eventType = pullParser.next();
 	    }
 
 	    // reached end tag, check if everything necessary was there
@@ -411,10 +449,7 @@ public class RecipeXMLParser {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();
 	}
-	Log.d(LOG_TAG, "Recipe: name=" + newRecipe.getName() + ", types="
-		+ Arrays.toString(newRecipe.getCategories()));
-	Log.d(LOG_TAG, "cuisines=" + Arrays.toString(newRecipe.getCuisines())
-		+ ", preparation:");
+	Log.d(LOG_TAG, "Recipe: " + newRecipe);
 
 	return newRecipe;
     }
@@ -424,27 +459,20 @@ public class RecipeXMLParser {
 	int eventType = pullParser.getEventType();
 	assert pullParser.getName().equals(ValidTags.ingredient.toString());
 	Ingredient ingredient = new Ingredient();
-	checkXMLSchemaConform(pullParser);
 	state = ParseStates.II_NAME;
-	pullParser.next();
-	checkXMLSchemaConform(pullParser);
-	eventType = pullParser.getEventType();
+	eventType = pullParser.next();
 	assert eventType == XmlPullParser.START_TAG
 		&& pullParser.getName().equals(ValidTags.name.toString());
 	ingredient.name = pullParser.nextText();
-	pullParser.next();
-	checkXMLSchemaConform(pullParser);
+	eventType = pullParser.next();
 	state = ParseStates.II_AMOUNT;
-	eventType = pullParser.getEventType();
 	assert eventType == XmlPullParser.START_TAG
 		&& pullParser.getName().equals(ValidTags.amount.toString());
 	ingredient.unit = Ingredient.Unit.valueOf(pullParser
 		.getAttributeValue(0));
 	ingredient.quantity = Double.valueOf(pullParser.nextText());
-	pullParser.next();
-	checkXMLSchemaConform(pullParser);
+	eventType = pullParser.next();
 	state = ParseStates.II_END;
-	eventType = pullParser.getEventType();
 	assert eventType == XmlPullParser.END_TAG
 		&& pullParser.getName().equals(ValidTags.ingredient.toString());
 
