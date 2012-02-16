@@ -49,9 +49,8 @@ public class ProxyRecipeProvider implements IRecipeProvider {
     public Recipe getRecipe(String name) {
 	if (map.containsKey(name)) {
 	    return map.get(name);
-	} else {
-	    return new RecipeProvider(mContext).getRecipe(name);
 	}
+	return new RecipeProvider(mContext).getRecipe(name);
     }
 
     @Override

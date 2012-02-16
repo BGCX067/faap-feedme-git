@@ -9,14 +9,6 @@ public class RecipeDatabaseHelper extends SQLiteOpenHelper {
 	Recipes, Ingredients, Type, Effort, Cuisine, One_takes, Categories
     }
 
-    // public static final String TABLE_RECIPES = "Recipes";
-    // public static final String TABLE_INGREDIENTS = "Ingredients";
-    // public static final String TABLE_TYPE = "Type";
-    // public static final String TABLE_EFFORT = "Effort";
-    // public static final String TABLE_CUISINE = "Cuisine";
-    // public static final String TABLE_ONETAKES = "One_takes";
-    // public static final String TABLE_CATEGORIES = "Categories";
-
     private static final String DATABASE_NAME = "Recipe_database";
     private static final int DATABASE_VERSION = 1;
 

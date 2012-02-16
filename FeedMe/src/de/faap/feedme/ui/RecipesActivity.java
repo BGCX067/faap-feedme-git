@@ -226,6 +226,7 @@ public class RecipesActivity extends ActionBarActivity {
 		return true;
 	    }
 
+	    @Override
 	    public boolean isChildSelectable(int groupPosition,
 		    int childPosition) {
 		return true;
