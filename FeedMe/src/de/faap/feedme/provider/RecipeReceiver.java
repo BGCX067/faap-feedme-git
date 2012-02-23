@@ -1,7 +1,7 @@
 package de.faap.feedme.provider;
 
-import android.content.ContentValues;
-import android.database.sqlite.SQLiteDatabase;
+import android.content.*;
+import android.database.sqlite.*;
 
 public class RecipeReceiver implements IRecipeReceiver {
 
@@ -9,26 +9,26 @@ public class RecipeReceiver implements IRecipeReceiver {
     private SQLiteDatabase db;
 
     public RecipeReceiver(RecipeDatabaseHelper rd) {
-	openHelper = rd;
+        openHelper = rd;
     }
 
     @Override
     public void open() {
-	db = openHelper.getWritableDatabase();
+        db = openHelper.getWritableDatabase();
     }
 
     @Override
     public void addTable(String tableName, ContentValues[] valuesTable) {
-	if (db.isOpen()) {
-	    for (ContentValues values : valuesTable) {
-		db.insert(tableName, null, values);
-	    }
-	}
+        if (db.isOpen()) {
+            for (ContentValues values : valuesTable) {
+                db.insert(tableName, null, values);
+            }
+        }
     }
 
     @Override
     public void close() {
-	db.close();
+        db.close();
     }
 
 }

@@ -1,6 +1,6 @@
 package de.faap.feedme.provider;
 
-import android.content.ContentValues;
+import android.content.*;
 
 public interface IRecipeReceiver {
 

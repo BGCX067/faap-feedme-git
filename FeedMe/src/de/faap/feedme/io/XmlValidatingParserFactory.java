@@ -1,16 +1,11 @@
 package de.faap.feedme.io;
 
-import java.io.File;
-
-import javax.xml.XMLConstants;
-import javax.xml.validation.SchemaFactory;
-
-import org.xml.sax.SAXException;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-import org.xmlpull.v1.XmlPullParserFactory;
-
-import android.util.Log;
+import java.io.*;
+import javax.xml.*;
+import javax.xml.validation.*;
+import org.xml.sax.*;
+import org.xmlpull.v1.*;
+import android.util.*;
 
 public class XmlValidatingParserFactory {
     private static final boolean tryBuiltInValidatingParser = false; // no real

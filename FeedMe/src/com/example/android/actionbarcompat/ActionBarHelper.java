@@ -1,25 +1,25 @@
 /*
  * Copyright 2011 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 
 package com.example.android.actionbarcompat;
 
-import android.app.Activity;
-import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
+import android.*;
+import android.app.*;
+import android.os.*;
+import android.view.*;
 
 /**
  * An abstract class that handles some common action bar-related functionality
@@ -40,19 +40,19 @@ public abstract class ActionBarHelper {
      * helper or Honeycomb-specific helper will be returned.
      */
     public static ActionBarHelper createInstance(Activity activity) {
-	// if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-	// {
-	// return new ActionBarHelperICS(activity);
-	// } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-	// return new ActionBarHelperHoneycomb(activity);
-	// } else {
-	// return new ActionBarHelperBase(activity);
-	// }
-	return new ActionBarHelperBase(activity);
+        // if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+        // {
+        // return new ActionBarHelperICS(activity);
+        // } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+        // return new ActionBarHelperHoneycomb(activity);
+        // } else {
+        // return new ActionBarHelperBase(activity);
+        // }
+        return new ActionBarHelperBase(activity);
     }
 
     protected ActionBarHelper(Activity activity) {
-	mActivity = activity;
+        mActivity = activity;
     }
 
     /**
@@ -77,7 +77,7 @@ public abstract class ActionBarHelper {
      * currently supported.
      */
     public boolean onCreateOptionsMenu(Menu menu) {
-	return true;
+        return true;
     }
 
     /**
@@ -106,6 +106,6 @@ public abstract class ActionBarHelper {
      * resource pre-Honeycomb.
      */
     public MenuInflater getMenuInflater(MenuInflater superMenuInflater) {
-	return superMenuInflater;
+        return superMenuInflater;
     }
 }

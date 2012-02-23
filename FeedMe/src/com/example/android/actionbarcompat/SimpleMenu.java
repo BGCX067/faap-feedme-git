@@ -1,37 +1,31 @@
 /*
  * Copyright 2011 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 
 package com.example.android.actionbarcompat;
 
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.res.Resources;
-import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.SubMenu;
-
-import java.util.ArrayList;
+import java.util.*;
+import android.content.*;
+import android.content.res.*;
+import android.view.*;
 
 /**
- * A <em>really</em> dumb implementation of the {@link android.view.Menu} interface, that's only
- * useful for our actionbar-compat purposes. See
- * <code>com.android.internal.view.menu.MenuBuilder</code> in AOSP for a more complete
- * implementation.
+ * A <em>really</em> dumb implementation of the {@link android.view.Menu}
+ * interface, that's only useful for our actionbar-compat purposes. See
+ * <code>com.android.internal.view.menu.MenuBuilder</code> in AOSP for a more
+ * complete implementation.
  */
 public class SimpleMenu implements Menu {
 
@@ -71,15 +65,17 @@ public class SimpleMenu implements Menu {
     }
 
     /**
-     * Adds an item to the menu.  The other add methods funnel to this.
+     * Adds an item to the menu. The other add methods funnel to this.
      */
     private MenuItem addInternal(int itemId, int order, CharSequence title) {
-        final SimpleMenuItem item = new SimpleMenuItem(this, itemId, order, title);
+        final SimpleMenuItem item =
+                new SimpleMenuItem(this, itemId, order, title);
         mItems.add(findInsertIndex(mItems, order), item);
         return item;
     }
 
-    private static int findInsertIndex(ArrayList<? extends MenuItem> items, int order) {
+    private static int findInsertIndex(ArrayList<? extends MenuItem> items,
+            int order) {
         for (int i = items.size() - 1; i >= 0; i--) {
             MenuItem item = items.get(i);
             if (item.getOrder() <= order) {
@@ -141,63 +137,80 @@ public class SimpleMenu implements Menu {
     // Unsupported operations.
 
     public SubMenu addSubMenu(CharSequence charSequence) {
-        throw new UnsupportedOperationException("This operation is not supported for SimpleMenu");
+        throw new UnsupportedOperationException(
+                "This operation is not supported for SimpleMenu");
     }
 
     public SubMenu addSubMenu(int titleRes) {
-        throw new UnsupportedOperationException("This operation is not supported for SimpleMenu");
+        throw new UnsupportedOperationException(
+                "This operation is not supported for SimpleMenu");
     }
 
-    public SubMenu addSubMenu(int groupId, int itemId, int order, CharSequence title) {
-        throw new UnsupportedOperationException("This operation is not supported for SimpleMenu");
+    public SubMenu addSubMenu(int groupId, int itemId, int order,
+            CharSequence title) {
+        throw new UnsupportedOperationException(
+                "This operation is not supported for SimpleMenu");
     }
 
     public SubMenu addSubMenu(int groupId, int itemId, int order, int titleRes) {
-        throw new UnsupportedOperationException("This operation is not supported for SimpleMenu");
+        throw new UnsupportedOperationException(
+                "This operation is not supported for SimpleMenu");
     }
 
-    public int addIntentOptions(int i, int i1, int i2, ComponentName componentName,
-            Intent[] intents, Intent intent, int i3, MenuItem[] menuItems) {
-        throw new UnsupportedOperationException("This operation is not supported for SimpleMenu");
+    public int addIntentOptions(int i, int i1, int i2,
+            ComponentName componentName, Intent[] intents, Intent intent,
+            int i3, MenuItem[] menuItems) {
+        throw new UnsupportedOperationException(
+                "This operation is not supported for SimpleMenu");
     }
 
     public void removeGroup(int i) {
-        throw new UnsupportedOperationException("This operation is not supported for SimpleMenu");
+        throw new UnsupportedOperationException(
+                "This operation is not supported for SimpleMenu");
     }
 
     public void setGroupCheckable(int i, boolean b, boolean b1) {
-        throw new UnsupportedOperationException("This operation is not supported for SimpleMenu");
+        throw new UnsupportedOperationException(
+                "This operation is not supported for SimpleMenu");
     }
 
     public void setGroupVisible(int i, boolean b) {
-        throw new UnsupportedOperationException("This operation is not supported for SimpleMenu");
+        throw new UnsupportedOperationException(
+                "This operation is not supported for SimpleMenu");
     }
 
     public void setGroupEnabled(int i, boolean b) {
-        throw new UnsupportedOperationException("This operation is not supported for SimpleMenu");
+        throw new UnsupportedOperationException(
+                "This operation is not supported for SimpleMenu");
     }
 
     public boolean hasVisibleItems() {
-        throw new UnsupportedOperationException("This operation is not supported for SimpleMenu");
+        throw new UnsupportedOperationException(
+                "This operation is not supported for SimpleMenu");
     }
 
     public void close() {
-        throw new UnsupportedOperationException("This operation is not supported for SimpleMenu");
+        throw new UnsupportedOperationException(
+                "This operation is not supported for SimpleMenu");
     }
 
     public boolean performShortcut(int i, KeyEvent keyEvent, int i1) {
-        throw new UnsupportedOperationException("This operation is not supported for SimpleMenu");
+        throw new UnsupportedOperationException(
+                "This operation is not supported for SimpleMenu");
     }
 
     public boolean isShortcutKey(int i, KeyEvent keyEvent) {
-        throw new UnsupportedOperationException("This operation is not supported for SimpleMenu");
+        throw new UnsupportedOperationException(
+                "This operation is not supported for SimpleMenu");
     }
 
     public boolean performIdentifierAction(int i, int i1) {
-        throw new UnsupportedOperationException("This operation is not supported for SimpleMenu");
+        throw new UnsupportedOperationException(
+                "This operation is not supported for SimpleMenu");
     }
 
     public void setQwertyMode(boolean b) {
-        throw new UnsupportedOperationException("This operation is not supported for SimpleMenu");
+        throw new UnsupportedOperationException(
+                "This operation is not supported for SimpleMenu");
     }
 }
