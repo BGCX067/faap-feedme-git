@@ -40,15 +40,14 @@ public abstract class ActionBarHelper {
      * helper or Honeycomb-specific helper will be returned.
      */
     public static ActionBarHelper createInstance(Activity activity) {
-        // if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-        // {
-        // return new ActionBarHelperICS(activity);
-        // } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-        // return new ActionBarHelperHoneycomb(activity);
-        // } else {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            return new ActionBarHelperICS(activity);
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            return new ActionBarHelperHoneycomb(activity);
+        } else {
+            return new ActionBarHelperBase(activity);
+        }
         // return new ActionBarHelperBase(activity);
-        // }
-        return new ActionBarHelperBase(activity);
     }
 
     protected ActionBarHelper(Activity activity) {
