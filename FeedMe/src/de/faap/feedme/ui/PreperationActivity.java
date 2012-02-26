@@ -112,7 +112,7 @@ public class PreperationActivity extends ActionBarActivity {
             ingredientsButton.setText(Integer.toString(recipe.getPortions()));
             ingredientsButton.setOnClickListener(new OnClickListener() {
                 @Override
-                public void onClick(View v) {
+                public void onClick(View view) {
                     FragmentTransaction ft =
                             getFragmentManager().beginTransaction();
                     DialogFragment df = new PortionPickerDialogFragment();
@@ -180,7 +180,7 @@ public class PreperationActivity extends ActionBarActivity {
             ((Button) v.findViewById(R.id.port_dia_dec))
                     .setOnClickListener(new OnClickListener() {
                         @Override
-                        public void onClick(View v) {
+                        public void onClick(View view) {
                             int portions =
                                     Integer.parseInt(text.getText().toString());
                             if (portions > 1) {
@@ -192,7 +192,7 @@ public class PreperationActivity extends ActionBarActivity {
             ((Button) v.findViewById(R.id.port_dia_inc))
                     .setOnClickListener(new OnClickListener() {
                         @Override
-                        public void onClick(View v) {
+                        public void onClick(View view) {
                             int portions =
                                     Integer.parseInt(text.getText().toString());
                             text.setText(Integer.toString(portions + 1));
@@ -202,7 +202,7 @@ public class PreperationActivity extends ActionBarActivity {
             ((Button) v.findViewById(R.id.port_dia_ok))
                     .setOnClickListener(new OnClickListener() {
                         @Override
-                        public void onClick(View v) {
+                        public void onClick(View view) {
                             int portions =
                                     Integer.parseInt(text.getText().toString());
                             recipe.changePortions(portions);

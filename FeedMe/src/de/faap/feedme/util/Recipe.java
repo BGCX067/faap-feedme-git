@@ -66,8 +66,10 @@ public class Recipe {
      * @param ingredient
      * @param unit
      */
-    public boolean addIngredient(double quantity, Unit unit, String name) {
-        Ingredient newIngredient = new Ingredient(quantity, unit, name);
+    public boolean addIngredient(double quantity, Unit unit,
+            String ingredientName) {
+        Ingredient newIngredient =
+                new Ingredient(quantity, unit, ingredientName);
         return addIngredient(newIngredient);
     }
 
@@ -88,14 +90,16 @@ public class Recipe {
             categories = new HashSet<String>();
         }
 
-        if (categories.contains(type)) return false;
+        if (categories.contains(type))
+            return false;
 
         categories.add(type);
         return true;
     }
 
     public String[] getCategories() {
-        if (categories == null) return null;
+        if (categories == null)
+            return null;
         return categories.toArray(new String[categories.size()]);
     }
 
@@ -146,7 +150,8 @@ public class Recipe {
      * @return true if the ingredient did not yet exist, false otherwise.
      */
     public boolean addIngredient(Ingredient newIngredient) {
-        if (ingredients.contains(newIngredient)) return false;
+        if (ingredients.contains(newIngredient))
+            return false;
 
         ingredients.add(newIngredient);
         return true;

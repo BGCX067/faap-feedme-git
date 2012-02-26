@@ -174,8 +174,9 @@ public class PlanActivity extends ActionBarActivity {
             // Set listeners
             OnClickListener listener = new OnClickListener() {
                 @Override
-                public void onClick(View v) {
-                    startActivity(buildIntent((String) ((TextView) v).getText()));
+                public void onClick(View view) {
+                    startActivity(buildIntent((String) ((TextView) view)
+                            .getText()));
                 }
             };
             sat.setOnClickListener(listener);
@@ -191,7 +192,7 @@ public class PlanActivity extends ActionBarActivity {
             ((Button) v.findViewById(R.id.rcp_btn_sat))
                     .setOnClickListener(new OnClickListener() {
                         @Override
-                        public void onClick(View v) {
+                        public void onClick(View view) {
                             IRecipeProvider provider =
                                     new RecipeProvider(mContext);
                             provider.getNewWeek(preferences.getCheckedButtons());

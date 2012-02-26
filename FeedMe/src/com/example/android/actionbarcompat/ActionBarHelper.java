@@ -58,14 +58,18 @@ public abstract class ActionBarHelper {
      * Action bar helper code to be run in
      * {@link Activity#onCreate(android.os.Bundle)}.
      */
+    @SuppressWarnings("unused")
     public void onCreate(Bundle savedInstanceState) {
+        // empty from google
     }
 
     /**
      * Action bar helper code to be run in
      * {@link Activity#onPostCreate(android.os.Bundle)}.
      */
+    @SuppressWarnings("unused")
     public void onPostCreate(Bundle savedInstanceState) {
+        // empty from google
     }
 
     /**
@@ -75,6 +79,7 @@ public abstract class ActionBarHelper {
      * NOTE: Setting the visibility of menu items in <em>menu</em> is not
      * currently supported.
      */
+    @SuppressWarnings("unused")
     public boolean onCreateOptionsMenu(Menu menu) {
         return true;
     }
@@ -83,7 +88,9 @@ public abstract class ActionBarHelper {
      * Action bar helper code to be run in
      * {@link Activity#onTitleChanged(CharSequence, int)}.
      */
+    @SuppressWarnings("unused")
     protected void onTitleChanged(CharSequence title, int color) {
+        // empty from google
     }
 
     /**
