@@ -60,22 +60,22 @@ public class RecipeXMLParser {
         unit
     }
 
-    private HashMap<String, ContentValues> ingredientsTable =
+    private HashMap<String, ContentValues> dbIngredientsTable =
             new HashMap<String, ContentValues>();
-    private HashMap<String, ContentValues> categoriesTable =
+    private HashMap<String, ContentValues> dbCategoriesTable =
             new HashMap<String, ContentValues>();
-    private HashMap<String, ContentValues> cuisinesTable =
+    private HashMap<String, ContentValues> dbCuisinesTable =
             new HashMap<String, ContentValues>();
-    private HashMap<String, ContentValues> effortsTable =
+    private HashMap<String, ContentValues> dbEffortsTable =
             new HashMap<String, ContentValues>();
-    private HashMap<String, ContentValues> unitsTable =
+    private HashMap<String, ContentValues> dbUnitsTable =
             new HashMap<String, ContentValues>();
 
-    private ArrayList<ContentValues> recipesTable =
+    private ArrayList<ContentValues> dbRecipesTable =
             new ArrayList<ContentValues>();
-    private ArrayList<ContentValues> ingredientsRecipeTable =
+    private ArrayList<ContentValues> dbIngredientsRecipeTable =
             new ArrayList<ContentValues>();
-    private ArrayList<ContentValues> categoriesRecipeTable =
+    private ArrayList<ContentValues> dbCategoriesRecipeTable =
             new ArrayList<ContentValues>();
 
     public RecipeXMLParser(Resources resMan) {
@@ -95,11 +95,11 @@ public class RecipeXMLParser {
             recipe = recipes.get(i);
             ContentValues recipesTableEntry = new ContentValues(5);
             // set cuisine
-            referenceKey = pushCuisine(recipe.getCuisine(), cuisinesTable);
+            referenceKey = pushCuisine(recipe.getCuisine(), dbCuisinesTable);
             recipesTableEntry.put(ValidTags.cuisine.toString(), referenceKey);
 
             // set effort
-            referenceKey = pushEffort(recipe.getEffort(), effortsTable);
+            referenceKey = pushEffort(recipe.getEffort(), dbEffortsTable);
             recipesTableEntry.put(ValidAttributes.effort.toString(),
                                   referenceKey);
 
@@ -114,27 +114,28 @@ public class RecipeXMLParser {
             // set categories
             ContentValues categoriesRecipeTableEntry = new ContentValues();
             for (String category : recipe.getCategories()) {
-                referenceKey = pushCategory(category, categoriesTable);
+                referenceKey = pushCategory(category, dbCategoriesTable);
                 categoriesRecipeTableEntry.put(ValidTags.recipe.toString(), i);
                 categoriesRecipeTableEntry.put(ValidTags.type.toString(),
                                                referenceKey);
-                categoriesRecipeTable.add(categoriesRecipeTableEntry);
+                dbCategoriesRecipeTable.add(categoriesRecipeTableEntry);
             }
 
             // set ingredients
             ContentValues ingredientsRecipeTableEntry = new ContentValues();
             for (Ingredient ingredient : recipe.getIngredients()) {
                 referenceKey =
-                        pushIngredient(ingredient, ingredientsTable, unitsTable);
+                        pushIngredient(ingredient, dbIngredientsTable,
+                                       dbUnitsTable);
                 ingredientsRecipeTableEntry.put(ValidTags.recipe.toString(), i);
                 ingredientsRecipeTableEntry
                         .put(ValidTags.ingredient.toString(), referenceKey);
                 ingredientsRecipeTableEntry.put(ValidTags.amount.toString(),
                                                 ingredient.quantity);
-                ingredientsRecipeTable.add(ingredientsRecipeTableEntry);
+                dbIngredientsRecipeTable.add(ingredientsRecipeTableEntry);
             }
 
-            recipesTable.add(recipesTableEntry);
+            dbRecipesTable.add(recipesTableEntry);
 
         }
 
@@ -238,25 +239,26 @@ public class RecipeXMLParser {
     public ContentValues[] getValuesForTable(RecipeDatabaseHelper.Tables table) {
         switch (table) {
         case Recipes:
-            return recipesTable.toArray(new ContentValues[recipesTable.size()]);
+            return dbRecipesTable.toArray(new ContentValues[dbRecipesTable
+                    .size()]);
         case Categories:
-            return categoriesRecipeTable
-                    .toArray(new ContentValues[categoriesRecipeTable.size()]);
+            return dbCategoriesRecipeTable
+                    .toArray(new ContentValues[dbCategoriesRecipeTable.size()]);
         case Cuisine:
-            return cuisinesTable.values()
-                    .toArray(new ContentValues[cuisinesTable.size()]);
+            return dbCuisinesTable.values()
+                    .toArray(new ContentValues[dbCuisinesTable.size()]);
         case Effort:
-            return effortsTable.values().toArray(new ContentValues[effortsTable
-                                                         .size()]);
+            return dbEffortsTable.values()
+                    .toArray(new ContentValues[dbEffortsTable.size()]);
         case Ingredients:
-            return ingredientsTable.values()
-                    .toArray(new ContentValues[ingredientsTable.size()]);
+            return dbIngredientsTable.values()
+                    .toArray(new ContentValues[dbIngredientsTable.size()]);
         case One_takes:
-            return ingredientsRecipeTable
-                    .toArray(new ContentValues[ingredientsRecipeTable.size()]);
+            return dbIngredientsRecipeTable
+                    .toArray(new ContentValues[dbIngredientsRecipeTable.size()]);
         case Type:
-            return categoriesTable.values()
-                    .toArray(new ContentValues[categoriesTable.size()]);
+            return dbCategoriesTable.values()
+                    .toArray(new ContentValues[dbCategoriesTable.size()]);
         default:
             assert false;
             return null;
@@ -388,6 +390,7 @@ public class RecipeXMLParser {
                         break;
                     case portions:
                         state = ParseStates.IR_PORTIONS;
+                        break;
                     default:
                         throw new IllegalStateException("Illegal parse state!");
                     }

@@ -26,13 +26,22 @@ public class RecipeValidatingXmlPullParser implements XmlPullParser {
     private boolean inIngredient = false;
 
     enum ValidNextTags {
-        recipes, recipe, name, type, preparation, portions, cuisine, ingredient, amount, text
+        recipes,
+        recipe,
+        name,
+        type,
+        preparation,
+        portions,
+        cuisine,
+        ingredient,
+        amount,
+        text
 
     }
 
     @Override
     public void defineEntityReplacementText(String entityName,
-        String replacementText) throws XmlPullParserException {
+            String replacementText) throws XmlPullParserException {
         parser.defineEntityReplacementText(entityName, replacementText);
 
     }
@@ -253,8 +262,8 @@ public class RecipeValidatingXmlPullParser implements XmlPullParser {
 
                 // check if the attribute has a legal format
                 if (parser.getAttributeCount() != 1
-                        || !parser.getAttributeName(0).equals(
-                                ValidAttributes.effort.toString())) {
+                        || !parser.getAttributeName(0)
+                                .equals(ValidAttributes.effort.toString())) {
                     throw new XmlPullParserException(
                             "Each recipe needs to have an effort! Types are: "
                                     + Arrays.toString(Effort.values())
@@ -274,8 +283,8 @@ public class RecipeValidatingXmlPullParser implements XmlPullParser {
                 // this is returned in getAttributeValue(0) if so
                 if (parser.getAttributeCount() > 1
                         || (parser.getAttributeCount() == 1 && !parser
-                                .getAttributeName(0).equals(
-                                        ValidAttributes.unit.toString()))) {
+                                .getAttributeName(0)
+                                .equals(ValidAttributes.unit.toString()))) {
                     throw new XmlPullParserException(
                             "Illegal unit type! Types are: "
                                     + Arrays.toString(Ingredient.Unit.values())
@@ -347,6 +356,7 @@ public class RecipeValidatingXmlPullParser implements XmlPullParser {
             case portions:
                 expected.remove(ValidNextTags.portions);
                 expected.add(ValidNextTags.ingredient);
+                break;
             case amount:
                 expected.remove(ValidNextTags.amount);
                 expected.add(ValidNextTags.ingredient);
