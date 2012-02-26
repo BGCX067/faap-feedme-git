@@ -4,15 +4,17 @@ import java.io.*;
 import java.util.*;
 import org.xmlpull.v1.*;
 import android.content.*;
+import android.content.res.*;
 import android.util.*;
+import de.faap.feedme.*;
 import de.faap.feedme.provider.*;
 import de.faap.feedme.util.*;
 import de.faap.feedme.util.Recipe.Effort;
 
 public class RecipeXMLParser {
-    private static String FILE_PATH = "/mnt/sdcard/recipes.xml";
-    private static String SCHEMA_PATH = "/mnt/sdcard/recipe.xsd";
     private static String LOG_TAG = "faap.feedme.xmlparse";
+
+    private Resources resourceManager;
 
     HashSet<String> recipeNames = new HashSet<String>();
     ArrayList<Recipe> recipes = new ArrayList<Recipe>();
@@ -76,9 +78,14 @@ public class RecipeXMLParser {
     private ArrayList<ContentValues> categoriesRecipeTable =
             new ArrayList<ContentValues>();
 
-    public boolean reparseRecipeDatabase() {
-        boolean parseSuccess = parseXMLFile(FILE_PATH);
-        if (!parseSuccess) return false;
+    public RecipeXMLParser(Resources resMan) {
+        this.resourceManager = resMan;
+    }
+
+    public boolean reparseRecipeDatabase(InputStream recipeStream) {
+        boolean parseSuccess = parseRecipeStream(recipeStream);
+        if (!parseSuccess)
+            return false;
 
         // now create data sets
 
@@ -257,27 +264,14 @@ public class RecipeXMLParser {
 
     }
 
-    private boolean parseXMLFile(String name) {
-
-        InputStream in;
-        File inFile;
-        try {
-            inFile = new File(name);
-            in = new FileInputStream(inFile);
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            return false;
-        }
-
-        return parseStream(in);
-    }
-
-    private boolean parseStream(InputStream input) {
+    private boolean parseRecipeStream(InputStream input) {
 
         try {
+            InputStream schemaStream;
+            schemaStream = resourceManager.openRawResource(R.raw.recipe_schema);
             XmlPullParser pullParser =
-                    XmlValidatingParserFactory.newValidatingParser(SCHEMA_PATH);
+                    XmlValidatingParserFactory
+                            .newValidatingParser(schemaStream);
             pullParser.setInput(input, "UTF-8");
 
             int eventType = pullParser.next(); // skip start document

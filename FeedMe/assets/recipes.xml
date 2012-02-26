@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<recipes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="recipe.xsd">
+  <recipe effort="small">
+    <name>Nudelpfanne</name>
+    <type>Nudeln</type>
+    <cuisine>Italienisch</cuisine>
+    <preparation>
+      Nimm Zutat 1 und füge Zutat 2 hinzu. fertig.
+    </preparation>
+    <portions>4</portions>
+    <ingredient>
+      <name>Zwiebeln</name>
+      <amount>0.5</amount>
+    </ingredient>
+    <ingredient>
+      <name>Wasser</name>
+      <amount unit="ml">500</amount>
+    </ingredient>
+  </recipe>
+  <recipe effort="small">
+    <name>Tortellini</name>
+    <type>Nudeln</type>
+    <cuisine>Italienisch</cuisine>
+    <preparation>
+      Nimm Zutat 1 und füge Zutat 2 Hinzu.
+      fertig.
+    </preparation>
+    <portions>4</portions>
+    <ingredient>
+      <name>Zwiebeln</name>
+      <amount>1</amount>
+    </ingredient>
+    <ingredient>
+      <name>Sahne</name>
+      <amount unit="g">200</amount>
+    </ingredient>
+  </recipe>
+  <recipe effort="small">
+    <name>Schinkennudeln</name>
+    <type>Nudeln</type>
+    <cuisine>Oarmeleidessen</cuisine>
+    <preparation>
+      Nimm Zutat 1 und füge Zutat 2 Hinzu.
+      fertig.
+    </preparation>
+    <portions>4</portions>
+    <ingredient>
+      <name>Schinken</name>
+      <amount unit="g">200</amount>
+    </ingredient>
+    <ingredient>
+      <name>Eier</name>
+      <amount>3</amount>
+    </ingredient>
+    <ingredient>
+      <name>Nudeln</name>
+      <amount unit="g">400</amount>
+    </ingredient>
+  </recipe>
+  <recipe effort="large">
+    <name>Orangen-Curry-Hähnchen</name>
+    <type>Hähnchen</type>
+    <cuisine>Afrikanisch</cuisine>
+    <preparation>
+      Nimm Zutat 1 und füge Zutat 2 Hinzu.
+      fertig.
+    </preparation>
+    <portions>4</portions>
+    <ingredient>
+      <name>Schinken</name>
+      <amount unit="g">200</amount>
+    </ingredient>
+    <ingredient>
+      <name>Eier</name>
+      <amount>3</amount>
+    </ingredient>
+    <ingredient>
+      <name>Nudeln</name>
+      <amount unit="g">400</amount>
+    </ingredient>
+  </recipe>
+</recipes>

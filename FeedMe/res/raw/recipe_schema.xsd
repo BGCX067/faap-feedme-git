@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="recipes">
+    <xs:complexType>
+      <xs:sequence>
+        <!--xs:element ref="head"/-->
+		    <xs:element name="recipe" type="recipetype" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <!--xs:element name="head">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="title" type="xs:string"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element-->
+  <xs:complexType name="recipetype">
+	<xs:sequence>
+		<xs:element name="name" type="xs:token"/>
+		<xs:element name="type" type="xs:normalizedString"  maxOccurs="unbounded"/>
+		<xs:element name="cuisine" type="xs:normalizedString"/>
+		<xs:element name="preparation" type="xs:string"/>
+		<xs:element name="portions" type="xs:integer"/>
+		<xs:element name="ingredient" type="ingredienttype" maxOccurs="unbounded"/>
+	</xs:sequence>
+	<xs:attribute name="effort" type="efforttype" use="required"/>
+  </xs:complexType>
+  <xs:simpleType name="efforttype">
+  <xs:restriction base="xs:string">
+      <xs:enumeration value="small"/>
+      <xs:enumeration value="large"/>
+      <xs:enumeration value="instant"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="ingredienttype">
+    <xs:sequence>
+      <xs:element name="name" type="xs:token"/>
+      <xs:element name="amount">
+        <xs:complexType>
+          <xs:simpleContent>
+            <xs:extension base="xs:decimal">
+              <xs:attribute name="unit" type="units"/>
+            </xs:extension>
+          </xs:simpleContent>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+    
+  </xs:complexType>
+
+  <xs:simpleType name="units">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="g"/>
+      <xs:enumeration value="ml"/>
+      <xs:enumeration value=""/>
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>

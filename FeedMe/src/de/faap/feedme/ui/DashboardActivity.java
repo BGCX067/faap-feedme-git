@@ -54,7 +54,8 @@ public class DashboardActivity extends ActionBarActivity {
                     @Override
                     public void onClick(View v) {
                         // TODO update database
-                        IUpdateDatabase updater = new DatabaseUpdater();
+                        IUpdateDatabase updater =
+                                new DatabaseUpdater(getResources(), getAssets());
                         getActionBarHelper().setProgressBarState(true);
                         updater.update();
                         getActionBarHelper().setProgressBarState(false);
