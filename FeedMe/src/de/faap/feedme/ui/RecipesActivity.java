@@ -1,6 +1,8 @@
 package de.faap.feedme.ui;
 
 import android.content.*;
+import android.database.*;
+import android.database.sqlite.*;
 import android.os.*;
 import android.support.v4.app.*;
 import android.support.v4.view.*;
@@ -10,6 +12,7 @@ import android.widget.*;
 import com.example.android.actionbarcompat.*;
 import com.viewpagerindicator.*;
 import de.faap.feedme.R;
+import de.faap.feedme.provider.*;
 import de.faap.feedme.util.*;
 
 public class RecipesActivity extends ActionBarActivity {
@@ -137,9 +140,63 @@ public class RecipesActivity extends ActionBarActivity {
             // } else {
             // recipes[0] = preferences.getCuisine();
             // }
-            String[] category = { "test" };
-            String[][] recipes = { { "a" }, { "b" } };
 
+            // query tables from database
+            RecipeDatabaseHelper openHelper =
+                    new RecipeDatabaseHelper(mContext);
+            SQLiteDatabase db = openHelper.getWritableDatabase();
+            Cursor cursorCat = null;
+
+            switch (pos) {
+            // effort
+            case 0:
+                cursorCat =
+                        db.rawQuery("SELECT name "
+                                            + "FROM "
+                                            + RecipeDatabaseHelper.Tables.Effort
+                                                    .toString(), null);
+                break;
+
+            // type
+            case 1:
+                cursorCat =
+                        db.rawQuery("SELECT name "
+                                            + "FROM "
+                                            + RecipeDatabaseHelper.Tables.Type
+                                                    .toString(),
+                                    null);
+                break;
+
+            // cuisine
+            case 2:
+                cursorCat =
+                        db.rawQuery("SELECT name "
+                                            + "FROM "
+                                            + RecipeDatabaseHelper.Tables.Cuisine
+                                                    .toString(), null);
+                break;
+
+            default:
+
+                break;
+            }
+
+            String[] category = null;
+
+            for (int i = 0; i < cursorCat.getCount(); i++) {
+                category = new String[cursorCat.getCount()];
+                category[i] = cursorCat.getString(i);
+            }
+
+            // TODO remove
+            if (category == null) {
+                category = new String[1];
+                category[0] = "categoregerhgege :S";
+            }
+
+            String[][] recipes = { { "0" }, { "b" } };
+
+            db.close();
             v.setAdapter(new CategoryListAdapter(category, recipes));
 
             return v;
