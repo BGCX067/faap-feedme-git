@@ -131,8 +131,9 @@ public class RecipeXMLParser {
             }
 
             // set ingredients
-            ContentValues ingredientsRecipeTableEntry = new ContentValues();
+            ContentValues ingredientsRecipeTableEntry;
             for (Ingredient ingredient : recipe.getIngredients()) {
+                ingredientsRecipeTableEntry = new ContentValues();
                 Log.d("faap.feedme", "Add to data set.");
                 Log.d("faap.feedme", recipe.getName());
                 Log.d("faap.feedme", ingredient.toString());
@@ -267,8 +268,6 @@ public class RecipeXMLParser {
             return dbIngredientsTable.values()
                     .toArray(new ContentValues[dbIngredientsTable.size()]);
         case One_takes:
-            Log.d("faap.feedme", Arrays.toString(dbIngredientsRecipeTable
-                    .toArray(new ContentValues[0])));
             return dbIngredientsRecipeTable
                     .toArray(new ContentValues[dbIngredientsRecipeTable.size()]);
         case Type:
