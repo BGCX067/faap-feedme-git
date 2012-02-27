@@ -12,7 +12,8 @@ import de.faap.feedme.util.*;
 import de.faap.feedme.util.Recipe.Effort;
 
 public class RecipeXMLParser {
-    private static String LOG_TAG = "faap.feedme.xmlparse";
+    private static final String LOG_TAG = "faap.feedme.xmlparse";
+    private static final String ID_HEADER = "_id";
 
     private Resources resourceManager;
 
@@ -162,11 +163,12 @@ public class RecipeXMLParser {
                                 + ingredient.unit.toString() + " as well as "
                                 + storedUnit.toString());
             }
-            return ingredientsTable.get(ingredient.name).getAsInteger("key");
+            return ingredientsTable.get(ingredient.name)
+                    .getAsInteger(ID_HEADER);
         }
         ContentValues entry = new ContentValues(3);
         int unitKey = putUnit(ingredient.unit, unitsTable);
-        entry.put("key", ingredientsTable.size());
+        entry.put(ID_HEADER, ingredientsTable.size());
         entry.put(ValidTags.name.toString(), ingredient.name.toString());
         entry.put(ValidAttributes.unit.toString(), unitKey);
         ingredientsTable.put(ingredient.name, entry);
@@ -176,11 +178,11 @@ public class RecipeXMLParser {
     private int putUnit(Ingredient.Unit unit,
             Map<String, ContentValues> unitsTable) {
         if (unitsTable.containsKey(unit.toString())) {
-            return unitsTable.get(unit.toString()).getAsInteger("key");
+            return unitsTable.get(unit.toString()).getAsInteger(ID_HEADER);
         }
 
         ContentValues entry = new ContentValues(2);
-        entry.put("key", unitsTable.size());
+        entry.put(ID_HEADER, unitsTable.size());
         entry.put(ValidTags.name.toString(), unit.toString());
         unitsTable.put(unit.toString(), entry);
         return unitsTable.size() - 1;
@@ -189,7 +191,7 @@ public class RecipeXMLParser {
     private Ingredient.Unit getUnitForKey(int key,
             Map<String, ContentValues> unitsTable) {
         for (ContentValues unitRecord : unitsTable.values()) {
-            if (unitRecord.getAsInteger("key") == key) {
+            if (unitRecord.getAsInteger(ID_HEADER) == key) {
                 return Ingredient.Unit.valueOf(unitRecord
                         .getAsString(ValidTags.name.toString()));
             }
@@ -200,11 +202,11 @@ public class RecipeXMLParser {
     private int pushCategory(String category,
             Map<String, ContentValues> categoriesTable) {
         if (categoriesTable.containsKey(category)) {
-            return categoriesTable.get(category).getAsInteger("key");
+            return categoriesTable.get(category).getAsInteger(ID_HEADER);
         }
 
         ContentValues entry = new ContentValues(2);
-        entry.put("key", categoriesTable.size());
+        entry.put(ID_HEADER, categoriesTable.size());
         entry.put(ValidTags.name.toString(), category);
         categoriesTable.put(category, entry);
         return categoriesTable.size() - 1;
@@ -213,11 +215,11 @@ public class RecipeXMLParser {
     private int pushEffort(Effort effort,
             Map<String, ContentValues> effortsTable) {
         if (effortsTable.containsKey(effort.toString())) {
-            return effortsTable.get(effort.toString()).getAsInteger("key");
+            return effortsTable.get(effort.toString()).getAsInteger(ID_HEADER);
         }
 
         ContentValues entry = new ContentValues(2);
-        entry.put("key", effortsTable.size());
+        entry.put(ID_HEADER, effortsTable.size());
         entry.put(ValidTags.name.toString(), effort.toString());
         effortsTable.put(effort.toString(), entry);
         return effortsTable.size() - 1;
@@ -226,11 +228,11 @@ public class RecipeXMLParser {
     private int pushCuisine(String cuisine,
             Map<String, ContentValues> cuisinesTable) {
         if (cuisinesTable.containsKey(cuisine)) {
-            return cuisinesTable.get(cuisine).getAsInteger("key");
+            return cuisinesTable.get(cuisine).getAsInteger(ID_HEADER);
         }
 
         ContentValues entry = new ContentValues(2);
-        entry.put("key", cuisinesTable.size());
+        entry.put(ID_HEADER, cuisinesTable.size());
         entry.put(ValidTags.name.toString(), cuisine);
         cuisinesTable.put(cuisine, entry);
         return cuisinesTable.size() - 1;
