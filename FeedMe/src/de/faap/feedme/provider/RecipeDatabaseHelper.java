@@ -15,7 +15,7 @@ public class RecipeDatabaseHelper extends SQLiteOpenHelper {
     }
 
     private static final String DATABASE_NAME = "Recipe_database";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     public RecipeDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -32,7 +32,7 @@ public class RecipeDatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE " + Tables.Recipes.toString() + " ("
                 + "_id INTEGER PRIMARY KEY," + "name TEXT,"
                 + "preperation TEXT," + "effort INTEGER," + "cuisine INTEGER,"
-                + "portion INTEGER," + "FOREIGN KEY (effort) REFERENCES "
+                + "portions INTEGER," + "FOREIGN KEY (effort) REFERENCES "
                 + Tables.Effort.toString() + "(_id),"
                 + "FOREIGN KEY (cuisine) REFERENCES "
                 + Tables.Cuisine.toString() + "(_id)" + ");");
@@ -53,22 +53,22 @@ public class RecipeDatabaseHelper extends SQLiteOpenHelper {
                 + "PRIMARY KEY (name, ingredient)" + ");");
 
         db.execSQL("CREATE TABLE " + Tables.Categories.toString() + " ("
-                + "name INTEGER," + "type INTEGER,"
-                + "FOREIGN KEY (name) REFERENCES " + Tables.Recipes.toString()
-                + "(_id)," + "FOREIGN KEY (type) REFERENCES "
-                + Tables.Type.toString() + "(_id),"
-                + "PRIMARY KEY (name, type)" + ");");
+                + "recipe INTEGER," + "type INTEGER,"
+                + "FOREIGN KEY (recipe) REFERENCES "
+                + Tables.Recipes.toString() + "(_id),"
+                + "FOREIGN KEY (type) REFERENCES " + Tables.Type.toString()
+                + "(_id)," + "PRIMARY KEY (recipe, type)" + ");");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS" + Tables.Recipes.toString());
-        db.execSQL("DROP TABLE IF EXISTS" + Tables.Ingredients.toString());
-        db.execSQL("DROP TABLE IF EXISTS" + Tables.Type.toString());
-        db.execSQL("DROP TABLE IF EXISTS" + Tables.Effort.toString());
-        db.execSQL("DROP TABLE IF EXISTS" + Tables.Cuisine.toString());
-        db.execSQL("DROP TABLE IF EXISTS" + Tables.One_takes.toString());
-        db.execSQL("DROP TABLE IF EXISTS" + Tables.Categories.toString());
+        db.execSQL("DROP TABLE IF EXISTS " + Tables.Recipes.toString());
+        db.execSQL("DROP TABLE IF EXISTS " + Tables.Ingredients.toString());
+        db.execSQL("DROP TABLE IF EXISTS " + Tables.Type.toString());
+        db.execSQL("DROP TABLE IF EXISTS " + Tables.Effort.toString());
+        db.execSQL("DROP TABLE IF EXISTS " + Tables.Cuisine.toString());
+        db.execSQL("DROP TABLE IF EXISTS " + Tables.One_takes.toString());
+        db.execSQL("DROP TABLE IF EXISTS " + Tables.Categories.toString());
         onCreate(db);
     }
 
