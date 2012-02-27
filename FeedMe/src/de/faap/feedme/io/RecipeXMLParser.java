@@ -134,6 +134,7 @@ public class RecipeXMLParser {
                 ingredientsRecipeTableEntry.put(ValidTags.amount.toString(),
                                                 ingredient.quantity);
                 dbIngredientsRecipeTable.add(ingredientsRecipeTableEntry);
+                ingredientsRecipeTableEntry.clear();
             }
 
             dbRecipesTable.add(recipesTableEntry);
@@ -256,6 +257,7 @@ public class RecipeXMLParser {
             return dbIngredientsTable.values()
                     .toArray(new ContentValues[dbIngredientsTable.size()]);
         case One_takes:
+            System.out.println(dbIngredientsRecipeTable.toString());
             return dbIngredientsRecipeTable
                     .toArray(new ContentValues[dbIngredientsRecipeTable.size()]);
         case Type:
