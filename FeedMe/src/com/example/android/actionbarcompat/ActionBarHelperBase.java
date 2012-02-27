@@ -168,6 +168,7 @@ public class ActionBarHelperBase extends ActionBarHelper {
      * Returns a {@link android.view.MenuInflater} that can read action bar
      * metadata on pre-Honeycomb devices.
      */
+    @Override
     public MenuInflater getMenuInflater(MenuInflater superMenuInflater) {
         return new WrappedMenuInflater(mActivity, superMenuInflater);
     }
@@ -228,6 +229,7 @@ public class ActionBarHelperBase extends ActionBarHelper {
             SimpleMenuItem smi = (SimpleMenuItem) item;
             if (!smi.getTitle().equals(mActivity.getString(R.string.app_name))) {
                 actionButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
                     public void onClick(View view) {
                         mActivity
                                 .onMenuItemSelected(Window.FEATURE_OPTIONS_PANEL,
@@ -237,6 +239,7 @@ public class ActionBarHelperBase extends ActionBarHelper {
             }
         } else { // make all other buttons clickable
             actionButton.setOnClickListener(new View.OnClickListener() {
+                @Override
                 public void onClick(View view) {
                     mActivity.onMenuItemSelected(Window.FEATURE_OPTIONS_PANEL,
                                                  item);

@@ -340,6 +340,7 @@ public class RecipeXMLParser {
      * @throws IllegalArgumentException
      *             If the recipe does not have the correct recipe format.
      */
+    @SuppressWarnings("incomplete-switch")
     private Recipe parseRecipe(XmlPullParser pullParser)
             throws IllegalArgumentException {
         Recipe newRecipe = null;

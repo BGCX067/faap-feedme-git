@@ -222,6 +222,7 @@ public class RecipeValidatingXmlPullParser implements XmlPullParser {
         return parser.isWhitespace();
     }
 
+    @SuppressWarnings("incomplete-switch")
     @Override
     public int next() throws XmlPullParserException, IOException {
         int event = parser.next();
@@ -442,6 +443,7 @@ public class RecipeValidatingXmlPullParser implements XmlPullParser {
 
     }
 
+    @SuppressWarnings("unused")
     @Override
     public int nextToken() throws XmlPullParserException, IOException {
         throw new UnsupportedOperationException("Not supported.");
