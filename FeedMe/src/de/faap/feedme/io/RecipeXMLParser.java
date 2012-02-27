@@ -172,7 +172,7 @@ public class RecipeXMLParser {
         entry.put(ValidTags.name.toString(), ingredient.name.toString());
         entry.put(ValidAttributes.unit.toString(), unitKey);
         ingredientsTable.put(ingredient.name, entry);
-        return 0;
+        return ingredientsTable.size() - 1;
     }
 
     private int putUnit(Ingredient.Unit unit,
