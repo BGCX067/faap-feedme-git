@@ -1,17 +1,22 @@
 package de.faap.feedme.io;
 
 import java.io.*;
+import android.content.*;
 import android.content.res.*;
 import android.util.*;
+import de.faap.feedme.provider.*;
 
 public class DatabaseUpdater implements IUpdateDatabase {
     private static String PATH_TO_DEF_RECIPE = "recipes.xml";
     RecipeXMLParser xmlParser;
     AssetManager assetManager;
+    Context context;
 
-    public DatabaseUpdater(Resources resMan, AssetManager assetMan) {
+    public DatabaseUpdater(Resources resMan, AssetManager assetMan,
+            Context context) {
         xmlParser = new RecipeXMLParser(resMan);
         this.assetManager = assetMan;
+        this.context = context;
     }
 
     @Override
@@ -22,11 +27,25 @@ public class DatabaseUpdater implements IUpdateDatabase {
 
     @Override
     public boolean update() {
+        IRecipeReceiver receiver =
+                new RecipeReceiver(new RecipeDatabaseHelper(context));
+
         InputStream newRecipesStream = getNewRecipesStream();
+
         if (newRecipesStream == null)
             return false;
 
-        return xmlParser.reparseRecipeDatabase(newRecipesStream);
+        boolean state = xmlParser.reparseRecipeDatabase(newRecipesStream);
+
+        receiver.open();
+        for (RecipeDatabaseHelper.Tables tab : RecipeDatabaseHelper.Tables
+                .values()) {
+            receiver.addTable(tab.toString(), xmlParser.getValuesForTable(tab));
+            Log.d("faap.feedmee.dbupdate", "Table " + tab.toString() + " added");
+        }
+        receiver.close();
+
+        return state;
     }
 
     private InputStream getNewRecipesStream() {

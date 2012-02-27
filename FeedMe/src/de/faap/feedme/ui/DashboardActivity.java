@@ -15,11 +15,14 @@ public class DashboardActivity extends ActionBarActivity {
     public static final int iconPlan = R.drawable.ic_action_planer;
     public static final int iconRecipes = R.drawable.ic_action_recipes;
 
+    protected Context context;
+
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dashboard);
+        this.context = this;
 
         findViewById(R.id.dashboard_btn_plan)
                 .setOnClickListener(new OnClickListener() {
@@ -55,7 +58,8 @@ public class DashboardActivity extends ActionBarActivity {
                     public void onClick(View v) {
                         // TODO update database
                         IUpdateDatabase updater =
-                                new DatabaseUpdater(getResources(), getAssets());
+                                new DatabaseUpdater(getResources(),
+                                        getAssets(), context);
                         getActionBarHelper().setProgressBarState(true);
                         updater.update();
                         getActionBarHelper().setProgressBarState(false);
