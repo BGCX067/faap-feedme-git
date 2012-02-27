@@ -89,6 +89,14 @@ public class RecipeXMLParser {
             return false;
 
         // now create data sets
+        dbCategoriesRecipeTable.clear();
+        dbCategoriesTable.clear();
+        dbCuisinesTable.clear();
+        dbEffortsTable.clear();
+        dbIngredientsRecipeTable.clear();
+        dbIngredientsTable.clear();
+        dbRecipesTable.clear();
+        dbUnitsTable.clear();
 
         int referenceKey;
         Recipe recipe;
@@ -125,6 +133,9 @@ public class RecipeXMLParser {
             // set ingredients
             ContentValues ingredientsRecipeTableEntry = new ContentValues();
             for (Ingredient ingredient : recipe.getIngredients()) {
+                Log.d("faap.feedme", "Add to data set.");
+                Log.d("faap.feedme", recipe.getName());
+                Log.d("faap.feedme", ingredient.toString());
                 referenceKey =
                         pushIngredient(ingredient, dbIngredientsTable,
                                        dbUnitsTable);
@@ -256,6 +267,8 @@ public class RecipeXMLParser {
             return dbIngredientsTable.values()
                     .toArray(new ContentValues[dbIngredientsTable.size()]);
         case One_takes:
+            Log.d("faap.feedme", Arrays.toString(dbIngredientsRecipeTable
+                    .toArray(new ContentValues[0])));
             return dbIngredientsRecipeTable
                     .toArray(new ContentValues[dbIngredientsRecipeTable.size()]);
         case Type:

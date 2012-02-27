@@ -118,25 +118,27 @@ public class RecipesActivity extends ActionBarActivity {
                             .inflate(R.layout.recipe_categories, container,
                                      false);
 
-            // TODO query category/recipes
-            // dont save them in preferences
-            String[] mock = { "0" };
-            preferences.saveEffort(mock);
-            mock[0] = "1";
-            preferences.saveType(mock);
-            mock[0] = "2";
-            preferences.saveCuisine(mock);
-
-            String[] category = { "foobar" };
-            String[][] recipes = new String[1][1];
-            // load the right list
-            if (pos == 0) {
-                recipes[0] = preferences.getEffort();
-            } else if (pos == 1) {
-                recipes[0] = preferences.getType();
-            } else {
-                recipes[0] = preferences.getCuisine();
-            }
+            // // TODO query category/recipes
+            // // dont save them in preferences
+            // String[] mock = { "0" };
+            // preferences.saveEffort(mock);
+            // mock[0] = "1";
+            // preferences.saveType(mock);
+            // mock[0] = "2";
+            // preferences.saveCuisine(mock);
+            //
+            // String[] category = { "foobar" };
+            // String[][] recipes = new String[1][1];
+            // // load the right list
+            // if (pos == 0) {
+            // recipes[0] = preferences.getEffort();
+            // } else if (pos == 1) {
+            // recipes[0] = preferences.getType();
+            // } else {
+            // recipes[0] = preferences.getCuisine();
+            // }
+            String[] category = { "test" };
+            String[][] recipes = { { "a" }, { "b" } };
 
             v.setAdapter(new CategoryListAdapter(category, recipes));
 

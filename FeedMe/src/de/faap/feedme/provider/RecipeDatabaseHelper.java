@@ -15,7 +15,7 @@ public class RecipeDatabaseHelper extends SQLiteOpenHelper {
     }
 
     private static final String DATABASE_NAME = "Recipe_database";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 8;
 
     public RecipeDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -31,7 +31,7 @@ public class RecipeDatabaseHelper extends SQLiteOpenHelper {
 
         db.execSQL("CREATE TABLE " + Tables.Recipes.toString() + " ("
                 + "_id INTEGER PRIMARY KEY," + "name TEXT,"
-                + "preperation TEXT," + "effort INTEGER," + "cuisine INTEGER,"
+                + "preparation TEXT," + "effort INTEGER," + "cuisine INTEGER,"
                 + "portions INTEGER," + "FOREIGN KEY (effort) REFERENCES "
                 + Tables.Effort.toString() + "(_id),"
                 + "FOREIGN KEY (cuisine) REFERENCES "
@@ -45,12 +45,12 @@ public class RecipeDatabaseHelper extends SQLiteOpenHelper {
                 + "_id INTEGER PRIMARY KEY," + "name TEXT" + ");");
 
         db.execSQL("CREATE TABLE " + Tables.One_takes.toString() + " ("
-                + "name INTEGER," + "ingredient INTEGER,"
-                + "quantitiy INTEGER," + "FOREIGN KEY (name) REFERENCES "
+                + "recipe INTEGER," + "ingredient INTEGER," + "amount FLOAT,"
+                + "FOREIGN KEY (recipe) REFERENCES "
                 + Tables.Recipes.toString() + "(_id),"
                 + "FOREIGN KEY (ingredient) REFERENCES "
                 + Tables.Ingredients.toString() + "(_id),"
-                + "PRIMARY KEY (name, ingredient)" + ");");
+                + "PRIMARY KEY (recipe, ingredient)" + ");");
 
         db.execSQL("CREATE TABLE " + Tables.Categories.toString() + " ("
                 + "recipe INTEGER," + "type INTEGER,"
