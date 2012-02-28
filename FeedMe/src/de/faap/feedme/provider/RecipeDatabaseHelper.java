@@ -15,7 +15,7 @@ public class RecipeDatabaseHelper extends SQLiteOpenHelper {
     }
 
     private static final String DATABASE_NAME = "Recipe_database";
-    private static final int DATABASE_VERSION = 14;
+    private static final int DATABASE_VERSION = 15;
 
     public RecipeDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -38,7 +38,7 @@ public class RecipeDatabaseHelper extends SQLiteOpenHelper {
                 + Tables.Cuisine.toString() + "(_id)" + ");");
 
         db.execSQL("CREATE TABLE " + Tables.Ingredients.toString() + " ("
-                + "_id INTEGER PRIMARY KEY," + "name TEXT," + "unit TEXT"
+                + "_id INTEGER PRIMARY KEY," + "name TEXT," + "unit INTEGER"
                 + ");");
 
         db.execSQL("CREATE TABLE " + Tables.Type.toString() + " ("

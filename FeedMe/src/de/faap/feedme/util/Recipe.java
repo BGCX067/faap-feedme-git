@@ -4,34 +4,24 @@ import java.util.*;
 import de.faap.feedme.util.Ingredient.Unit;
 
 public class Recipe {
-    private String name;
-    private int portions;
-    // private double[] quantities;
-    // private String[] units;
-    // private String[] ingredients;
-    private String preparation;
-
-    private Effort effort;
-
     public enum Effort {
         small,
         large,
         instant
     }
 
+    private String name;
+    private int portions;
+    private String preparation;
+    private Effort effort;
     private HashSet<Ingredient> ingredients = new HashSet<Ingredient>();
-
     private String cuisine = null;
-
     private HashSet<String> categories = null;
 
     public Recipe(String name, int portions, double[] quantities, Unit[] units,
             String[] ingredientNames, String preperation) {
         this.name = name;
         this.portions = portions;
-        // this.quantities = quantities;
-        // this.units = units;
-        // this.ingredients = ingredients;
         assert quantities.length == units.length
                 && quantities.length == ingredientNames.length;
         for (int i = 0; i < quantities.length; i++) {
@@ -114,18 +104,6 @@ public class Recipe {
     public int getPortions() {
         return portions;
     }
-
-    // public double[] getQuantities() {
-    // return quantities;
-    // }
-    //
-    // public String[] getUnits() {
-    // return units;
-    // }
-    //
-    // public String[] getIngredients() {
-    // return ingredients;
-    // }
 
     public String getPreparation() {
         return preparation;

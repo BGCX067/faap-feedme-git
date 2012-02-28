@@ -120,10 +120,6 @@ public class PreperationActivity extends ActionBarActivity {
                 }
             });
 
-            // create list entries
-            // double[] quantities = recipe.getQuantities();
-            // String[] units = recipe.getUnits();
-            // String[] ingredients = recipe.getIngredients();
             Ingredient[] ingredients = recipe.getIngredients();
             String[] ingredientStrings = new String[ingredients.length];
             for (int i = 0; i < ingredientStrings.length; i++) {
