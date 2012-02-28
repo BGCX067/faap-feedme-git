@@ -102,7 +102,10 @@ public class RecipeXMLParser {
         Recipe recipe;
         for (int i = 0; i < recipes.size(); i++) {
             recipe = recipes.get(i);
-            ContentValues recipesTableEntry = new ContentValues(5);
+            ContentValues recipesTableEntry = new ContentValues(6);
+            recipesTableEntry.put(ID_HEADER, i);
+            recipesTableEntry.put(ValidTags.name.toString(), recipe.getName());
+
             // set cuisine
             referenceKey = pushCuisine(recipe.getCuisine(), dbCuisinesTable);
             recipesTableEntry.put(ValidTags.cuisine.toString(), referenceKey);

@@ -1,5 +1,6 @@
 package de.faap.feedme.ui;
 
+import java.util.*;
 import android.content.*;
 import android.database.*;
 import android.database.sqlite.*;
@@ -120,104 +121,148 @@ public class RecipesActivity extends ActionBarActivity {
                     (ExpandableListView) inflater
                             .inflate(R.layout.recipe_categories, container,
                                      false);
-
-            // // TODO query category/recipes
-            // // dont save them in preferences
-            // String[] mock = { "0" };
-            // preferences.saveEffort(mock);
-            // mock[0] = "1";
-            // preferences.saveType(mock);
-            // mock[0] = "2";
-            // preferences.saveCuisine(mock);
-            //
-            // String[] category = { "foobar" };
-            // String[][] recipes = new String[1][1];
-            // // load the right list
-            // if (pos == 0) {
-            // recipes[0] = preferences.getEffort();
-            // } else if (pos == 1) {
-            // recipes[0] = preferences.getType();
-            // } else {
-            // recipes[0] = preferences.getCuisine();
-            // }
-
-            // query tables from database
             RecipeDatabaseHelper openHelper =
                     new RecipeDatabaseHelper(mContext);
             SQLiteDatabase db = openHelper.getWritableDatabase();
-            Cursor cursorCat = null;
 
+            Cursor cursor;
             switch (pos) {
-            // effort
             case 0:
-                cursorCat =
-                        db.rawQuery("SELECT name "
-                                            + "FROM "
-                                            + RecipeDatabaseHelper.Tables.Effort
-                                                    .toString(), null);
+                cursor = this.queryEffort(db);
                 break;
 
-            // type
             case 1:
-                cursorCat =
-                        db.rawQuery("SELECT name "
-                                            + "FROM "
-                                            + RecipeDatabaseHelper.Tables.Type
-                                                    .toString(),
-                                    null);
+                cursor = this.queryType(db);
                 break;
 
-            // cuisine
             case 2:
-                cursorCat =
-                        db.rawQuery("SELECT name "
-                                            + "FROM "
-                                            + RecipeDatabaseHelper.Tables.Cuisine
-                                                    .toString(), null);
+                cursor = this.queryCuisine(db);
                 break;
 
             default:
-
+                cursor = null;
                 break;
             }
 
-            String[] category = null;
-
-            int count = cursorCat.getCount();
-
-            for (int i = 0; i < count; i++) {
-                category = new String[count];
-                cursorCat.moveToNext();
-                category[i] = cursorCat.getString(0);
+            ArrayList<String> categories = new ArrayList<String>();
+            ArrayList<ArrayList<String>> recipes =
+                    new ArrayList<ArrayList<String>>();
+            if (cursor != null) {
+                String category = "";
+                ArrayList<String> recipesTmp = null;
+                while (cursor.moveToNext()) {
+                    String curCategory = cursor.getString(0);
+                    if (!category.equals(curCategory)) {
+                        // new category
+                        category = curCategory;
+                        categories.add(category);
+                        recipesTmp = new ArrayList<String>();
+                        recipes.add(recipesTmp);
+                    }
+                    recipesTmp.add(cursor.getString(1));
+                }
             }
-
-            // TODO remove
-            if (category == null) {
-                category = new String[1];
-                category[0] = "categoregerhgege :S";
-            }
-
-            String[][] recipes = { { "0" }, { "b" } };
 
             db.close();
-            v.setAdapter(new CategoryListAdapter(category, recipes));
+            v.setAdapter(new CategoryListAdapter(categories, recipes));
 
             return v;
         }
 
+        private Cursor queryEffort(SQLiteDatabase db) {
+            return db.rawQuery("SELECT "
+                                       + RecipeDatabaseHelper.Tables.Effort
+                                               .toString()
+                                       + ".name, "
+                                       + RecipeDatabaseHelper.Tables.Recipes
+                                               .toString()
+                                       + ".name "
+                                       + "FROM "
+                                       + RecipeDatabaseHelper.Tables.Effort
+                                               .toString()
+                                       + " INNER JOIN "
+                                       + RecipeDatabaseHelper.Tables.Recipes
+                                               .toString()
+                                       + " ON "
+                                       + RecipeDatabaseHelper.Tables.Effort
+                                               .toString()
+                                       + "._id = "
+                                       + RecipeDatabaseHelper.Tables.Recipes
+                                               .toString()
+                                       + ".effort "
+                                       + "ORDER BY "
+                                       + RecipeDatabaseHelper.Tables.Effort
+                                               .toString() + ".name ASC", null);
+        }
+
+        private Cursor queryCuisine(SQLiteDatabase db) {
+            return db.rawQuery("SELECT "
+                                       + RecipeDatabaseHelper.Tables.Cuisine
+                                               .toString()
+                                       + ".name, "
+                                       + RecipeDatabaseHelper.Tables.Recipes
+                                               .toString()
+                                       + ".name "
+                                       + "FROM "
+                                       + RecipeDatabaseHelper.Tables.Cuisine
+                                               .toString()
+                                       + " INNER JOIN "
+                                       + RecipeDatabaseHelper.Tables.Recipes
+                                               .toString()
+                                       + " ON "
+                                       + RecipeDatabaseHelper.Tables.Cuisine
+                                               .toString()
+                                       + "._id = "
+                                       + RecipeDatabaseHelper.Tables.Recipes
+                                               .toString()
+                                       + ".effort "
+                                       + "ORDER BY "
+                                       + RecipeDatabaseHelper.Tables.Cuisine
+                                               .toString() + ".name ASC", null);
+        }
+
+        private Cursor queryType(SQLiteDatabase db) {
+            return db.rawQuery("SELECT TypeRecipes.name, "
+                                       + RecipeDatabaseHelper.Tables.Recipes
+                                               .toString()
+                                       + ".name "
+                                       + "FROM (SELECT recipe, name "
+                                       + "FROM "
+                                       + RecipeDatabaseHelper.Tables.Type
+                                               .toString()
+                                       + " INNER JOIN "
+                                       + RecipeDatabaseHelper.Tables.Categories
+                                               .toString()
+                                       + " ON "
+                                       + RecipeDatabaseHelper.Tables.Type
+                                               .toString()
+                                       + "._id = "
+                                       + RecipeDatabaseHelper.Tables.Categories
+                                               .toString()
+                                       + ".type) AS TypeRecipes "
+                                       + "INNER JOIN "
+                                       + RecipeDatabaseHelper.Tables.Recipes
+                                               .toString()
+                                       + " ON TypeRecipes.recipe = "
+                                       + RecipeDatabaseHelper.Tables.Recipes
+                                               .toString() + "._id "
+                                       + "ORDER BY TypeRecipes.name ASC", null);
+        }
+
         private class CategoryListAdapter extends BaseExpandableListAdapter {
 
-            private String[] categories;
-            private String[][] recipes;
+            private ArrayList<String> categories;
+            private ArrayList<ArrayList<String>> recipes;
 
-            public CategoryListAdapter(String[] categories, String[][] recipes) {
+            public CategoryListAdapter(ArrayList<String> categories,
+                    ArrayList<ArrayList<String>> recipes) {
                 this.categories = categories;
                 this.recipes = recipes;
             }
 
             @Override
             public Object getChild(int groupPosition, int childPosition) {
-                return recipes[groupPosition][childPosition];
+                return recipes.get(groupPosition).get(childPosition);
             }
 
             @Override
@@ -229,7 +274,7 @@ public class RecipesActivity extends ActionBarActivity {
             public View getChildView(int groupPosition, int childPosition,
                     boolean isLastChild, View convertView, ViewGroup parent) {
                 TextView textView = getGenericView();
-                textView.setText(recipes[groupPosition][childPosition]);
+                textView.setText(recipes.get(groupPosition).get(childPosition));
                 textView.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -247,17 +292,17 @@ public class RecipesActivity extends ActionBarActivity {
 
             @Override
             public int getChildrenCount(int groupPosition) {
-                return recipes[groupPosition].length;
+                return recipes.get(groupPosition).size();
             }
 
             @Override
             public Object getGroup(int groupPosition) {
-                return categories[groupPosition];
+                return categories.get(groupPosition);
             }
 
             @Override
             public int getGroupCount() {
-                return categories.length;
+                return categories.size();
             }
 
             @Override
@@ -269,7 +314,7 @@ public class RecipesActivity extends ActionBarActivity {
             public View getGroupView(int groupPosition, boolean isExpanded,
                     View convertView, ViewGroup parent) {
                 TextView textView = getGenericView();
-                textView.setText(categories[groupPosition]);
+                textView.setText(categories.get(groupPosition));
                 return textView;
             }
 
