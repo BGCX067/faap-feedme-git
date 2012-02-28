@@ -183,9 +183,12 @@ public class RecipesActivity extends ActionBarActivity {
 
             String[] category = null;
 
-            for (int i = 0; i < cursorCat.getCount(); i++) {
-                category = new String[cursorCat.getCount()];
-                category[i] = cursorCat.getString(i);
+            int count = cursorCat.getCount();
+
+            for (int i = 0; i < count; i++) {
+                category = new String[count];
+                cursorCat.moveToNext();
+                category[i] = cursorCat.getString(0);
             }
 
             // TODO remove
