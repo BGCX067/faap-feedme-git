@@ -1,8 +1,13 @@
 package de.faap.feedme.ui;
 
+import android.app.*;
 import android.content.*;
 import android.os.*;
 import android.support.v4.app.*;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.*;
 import android.view.*;
 import android.view.View.OnClickListener;
@@ -29,11 +34,18 @@ public class PreperationActivity extends ActionBarActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.preperation);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            ActionBar actionBar = getActionBar();
+            actionBar
+                    .setIcon(getResources().getDrawable(R.drawable.ic_recipes));
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         mContext = getApplicationContext();
         db = ProxyRecipeProvider.getInstance(mContext);
         Bundle bundle = getIntent().getExtras();
         String recipeName = bundle.getString(DashboardActivity.ACTIONBAR_TITLE);
+        this.setTitle(recipeName);
         recipe = db.getRecipe(recipeName);
 
         mFPAdapter = new mFPAdapter(getSupportFragmentManager());

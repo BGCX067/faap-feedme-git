@@ -1,8 +1,11 @@
 package de.faap.feedme.ui;
 
+import android.app.*;
 import android.content.*;
 import android.os.*;
 import android.support.v4.app.*;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.*;
 import android.view.*;
 import android.view.View.OnClickListener;
@@ -29,6 +32,13 @@ public class PlanActivity extends ActionBarActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.plan);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            ActionBar actionBar = getActionBar();
+            actionBar.setIcon(getResources().getDrawable(R.drawable.ic_planer));
+            actionBar.setDisplayHomeAsUpEnabled(true);
+
+        }
+        setTitle(getResources().getString(R.string.title_plan));
 
         mContext = getApplicationContext();
         preferences = new Preferences(this);
