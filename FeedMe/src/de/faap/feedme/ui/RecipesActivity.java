@@ -163,6 +163,7 @@ public class RecipesActivity extends ActionBarActivity {
                 }
             }
 
+            cursor.close();
             db.close();
             v.setAdapter(new CategoryListAdapter(categories, recipes));
 

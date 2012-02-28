@@ -69,8 +69,8 @@ public class RecipeXMLParser {
             new HashMap<String, ContentValues>();
     private HashMap<String, ContentValues> dbEffortsTable =
             new HashMap<String, ContentValues>();
-    private HashMap<String, ContentValues> dbUnitsTable =
-            new HashMap<String, ContentValues>();
+    // private HashMap<String, ContentValues> dbUnitsTable =
+    // new HashMap<String, ContentValues>();
 
     private ArrayList<ContentValues> dbRecipesTable =
             new ArrayList<ContentValues>();
@@ -96,7 +96,7 @@ public class RecipeXMLParser {
         dbIngredientsRecipeTable.clear();
         dbIngredientsTable.clear();
         dbRecipesTable.clear();
-        dbUnitsTable.clear();
+        // dbUnitsTable.clear();
 
         int referenceKey;
         Recipe recipe;
@@ -137,12 +137,10 @@ public class RecipeXMLParser {
             ContentValues ingredientsRecipeTableEntry;
             for (Ingredient ingredient : recipe.getIngredients()) {
                 ingredientsRecipeTableEntry = new ContentValues();
-                Log.d("reparseRecipeDatabase", "Add to data set.");
-                Log.d("reparseRecipeDatabase", recipe.getName());
-                Log.d("reparseRecipeDatabase", ingredient.toString());
-                referenceKey =
-                        pushIngredient(ingredient, dbIngredientsTable,
-                                       dbUnitsTable);
+                Log.d("faap.feedme", "Add to data set.");
+                Log.d("faap.feedme", recipe.getName());
+                Log.d("faap.feedme", ingredient.toString());
+                referenceKey = pushIngredient(ingredient, dbIngredientsTable);
                 ingredientsRecipeTableEntry.put(ValidTags.recipe.toString(), i);
                 ingredientsRecipeTableEntry
                         .put(ValidTags.ingredient.toString(), referenceKey);
@@ -159,8 +157,7 @@ public class RecipeXMLParser {
     }
 
     private int pushIngredient(Ingredient ingredient,
-            Map<String, ContentValues> ingredientsTable,
-            Map<String, ContentValues> unitsTable)
+            Map<String, ContentValues> ingredientsTable)
             throws IllegalArgumentException {
         if (ingredientsTable.containsKey(ingredient.name)) {
             // check if the units match
@@ -169,8 +166,10 @@ public class RecipeXMLParser {
             int storedUnitKey =
                     storedIngredient.getAsInteger(ValidAttributes.unit
                             .toString());
-            Ingredient.Unit storedUnit =
-                    getUnitForKey(storedUnitKey, unitsTable);
+            // Ingredient.Unit storedUnit =
+            // getUnitForKey(storedUnitKey, unitsTable);
+            Ingredient.Unit storedUnit = getUnitForKey(storedUnitKey);
+
             if (!storedUnit.equals(ingredient.unit)) {
                 throw new IllegalArgumentException(
                         "Ingredients with the same name, must have the same unit-type. "
@@ -182,36 +181,21 @@ public class RecipeXMLParser {
                     .getAsInteger(ID_HEADER);
         }
         ContentValues entry = new ContentValues(3);
-        int unitKey = putUnit(ingredient.unit, unitsTable);
         entry.put(ID_HEADER, ingredientsTable.size());
         entry.put(ValidTags.name.toString(), ingredient.name.toString());
-        entry.put(ValidAttributes.unit.toString(), unitKey);
+        entry.put(ValidAttributes.unit.toString(), ingredient.unit.ordinal());
         ingredientsTable.put(ingredient.name, entry);
         return ingredientsTable.size() - 1;
     }
 
-    private int putUnit(Ingredient.Unit unit,
-            Map<String, ContentValues> unitsTable) {
-        if (unitsTable.containsKey(unit.toString())) {
-            return unitsTable.get(unit.toString()).getAsInteger(ID_HEADER);
-        }
-
-        ContentValues entry = new ContentValues(2);
-        entry.put(ID_HEADER, unitsTable.size());
-        entry.put(ValidTags.name.toString(), unit.toString());
-        unitsTable.put(unit.toString(), entry);
-        return unitsTable.size() - 1;
-    }
-
-    private Ingredient.Unit getUnitForKey(int key,
-            Map<String, ContentValues> unitsTable) {
-        for (ContentValues unitRecord : unitsTable.values()) {
-            if (unitRecord.getAsInteger(ID_HEADER) == key) {
-                return Ingredient.Unit.valueOf(unitRecord
-                        .getAsString(ValidTags.name.toString()));
+    private Ingredient.Unit getUnitForKey(int key) {
+        for (Ingredient.Unit enumUnit : Ingredient.Unit.values()) {
+            if (enumUnit.ordinal() == key) {
+                return enumUnit;
             }
         }
-        return null;
+        throw new IllegalArgumentException("The key: " + key
+                + " is not a legal ordinal value of the enum Units.");
     }
 
     private int pushCategory(String category,

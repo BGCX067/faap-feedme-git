@@ -3,6 +3,7 @@ package de.faap.feedme.provider;
 import android.content.*;
 import android.database.*;
 import android.database.sqlite.*;
+import android.util.*;
 import de.faap.feedme.*;
 import de.faap.feedme.util.*;
 
@@ -21,57 +22,73 @@ public class RecipeProvider implements IRecipeProvider {
     public Recipe getRecipe(String name) {
         int portions;
         double[] quantities;
-        String[] units;
+        int[] units;
         String[] ingredients;
-        String preperation;
-        // String effortFromDB = "small";
-
+        String preparation;
         int _id;
 
         SQLiteDatabase db =
                 new RecipeDatabaseHelper(mContext).getReadableDatabase();
 
-        // query to get _id, preperation and portions
+        // query to get _id, preparation and portions
         Cursor simpleRecipeData =
-                db.rawQuery("SELECT _id,preperation,portion " + "FROM "
+                db.rawQuery("SELECT _id, preparation, portions " + "FROM "
                         + RecipeDatabaseHelper.Tables.Recipes.toString() + " "
-                        + "WHERE name = ? ", new String[] { name });
+                        + "WHERE name = \"" + name + "\"", null);
 
+        simpleRecipeData.moveToNext();
         _id = simpleRecipeData.getInt(0);
-        preperation = simpleRecipeData.getString(1);
+        preparation = simpleRecipeData.getString(1);
         portions = simpleRecipeData.getInt(2);
         simpleRecipeData.close();
 
         // query to get quantities, units and ingredients
         Cursor complexRecipeData =
-                db.rawQuery("SELECT temp.quantity,Ingredients.name,Ingredients.unit "
-                                    + "FROM (SELECT quantitiy,ingredient "
-                                    + "FROM One_takes "
-                                    + "WHERE name = "
+                db.rawQuery("SELECT TEMP.amount, "
+                                    + RecipeDatabaseHelper.Tables.Ingredients
+                                            .toString()
+                                    + ".name, "
+                                    + RecipeDatabaseHelper.Tables.Ingredients
+                                            .toString()
+                                    + ".unit "
+                                    + "FROM (SELECT amount, ingredient "
+                                    + "FROM "
+                                    + RecipeDatabaseHelper.Tables.One_takes
+                                            .toString()
+                                    + " WHERE recipe = \""
                                     + _id
-                                    + ") as temp "
-                                    + "INNER JOIN Ingredients on temp.ingredient = Ingredients._id ",
-                            null);
+                                    + "\") AS TEMP "
+                                    + "INNER JOIN "
+                                    + RecipeDatabaseHelper.Tables.Ingredients
+                                            .toString()
+                                    + " on TEMP.ingredient = "
+                                    + RecipeDatabaseHelper.Tables.Ingredients
+                                            .toString() + "._id ", null);
 
         int length = complexRecipeData.getCount();
         quantities = new double[length];
-        units = new String[length];
+        units = new int[length];
         ingredients = new String[length];
 
         for (int i = 0; complexRecipeData.moveToNext(); i++) {
             quantities[i] = complexRecipeData.getDouble(0);
             ingredients[i] = complexRecipeData.getString(1);
-            units[i] = complexRecipeData.getString(2);
+            units[i] = complexRecipeData.getInt(2);
         }
 
         Ingredient.Unit[] internalUnits = new Ingredient.Unit[units.length];
         for (int i = 0; i < units.length; i++) {
-            internalUnits[i] = Ingredient.Unit.valueOf(units[i]);
+            assert Ingredient.Unit.values().length >= units[i] : "The unit number "
+                    + units[i] + " is no member of the Units enum.";
+            internalUnits[i] = Ingredient.Unit.values()[units[i]];
         }
 
+        Log.d("faap.feedme.RecPrv", "reached1337");
+        complexRecipeData.close();
         db.close();
+
         return new Recipe(name, portions, quantities, internalUnits,
-                ingredients, preperation);
+                ingredients, preparation);
     }
 
     @Override

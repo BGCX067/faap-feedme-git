@@ -1,6 +1,5 @@
 package de.faap.feedme.provider;
 
-import static de.faap.feedme.util.Ingredient.Unit.*;
 import java.util.*;
 import android.content.*;
 import de.faap.feedme.util.*;
@@ -16,26 +15,6 @@ public class ProxyRecipeProvider implements IRecipeProvider {
 
     private ProxyRecipeProvider() {
         map = new HashMap<String, Recipe>();
-        // TODO mock sachen entfernen
-        int portions = 2;
-        double[] quantities = { 1, 2000, 500 };
-        Ingredient.Unit[] units = { count, ml, g };
-        String[] ingredients = { "Ei", "Wasser", "Mehl" };
-        String preperation = "Zusammenmischen, 10min in Pfanne, namnamnam";
-
-        Recipe r0 =
-                new Recipe("0", portions, quantities, units, ingredients,
-                        preperation);
-        Recipe r1 =
-                new Recipe("1", portions, quantities, units, ingredients,
-                        preperation);
-        Recipe r2 =
-                new Recipe("2", portions, quantities, units, ingredients,
-                        preperation);
-
-        map.put("0", r0);
-        map.put("1", r1);
-        map.put("2", r2);
     }
 
     public static ProxyRecipeProvider getInstance(Context context) {
@@ -48,7 +27,10 @@ public class ProxyRecipeProvider implements IRecipeProvider {
         if (map.containsKey(name)) {
             return map.get(name);
         }
-        return new RecipeProvider(mContext).getRecipe(name);
+        // TODO collapse
+        IRecipeProvider provider = new RecipeProvider(mContext);
+        Recipe recipe = provider.getRecipe(name);
+        return recipe;
     }
 
     @Override
