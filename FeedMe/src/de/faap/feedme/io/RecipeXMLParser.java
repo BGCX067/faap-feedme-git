@@ -134,9 +134,9 @@ public class RecipeXMLParser {
             ContentValues ingredientsRecipeTableEntry;
             for (Ingredient ingredient : recipe.getIngredients()) {
                 ingredientsRecipeTableEntry = new ContentValues();
-                Log.d("faap.feedme", "Add to data set.");
-                Log.d("faap.feedme", recipe.getName());
-                Log.d("faap.feedme", ingredient.toString());
+                Log.d("reparseRecipeDatabase", "Add to data set.");
+                Log.d("reparseRecipeDatabase", recipe.getName());
+                Log.d("reparseRecipeDatabase", ingredient.toString());
                 referenceKey =
                         pushIngredient(ingredient, dbIngredientsTable,
                                        dbUnitsTable);
@@ -476,7 +476,7 @@ public class RecipeXMLParser {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        Log.d(LOG_TAG, "Recipe: " + newRecipe);
+        // Log.d(LOG_TAG, "Recipe: " + newRecipe);
 
         return newRecipe;
     }
@@ -505,7 +505,7 @@ public class RecipeXMLParser {
 
         assert ingredient.name != null && ingredient.quantity != Double.NaN
                 && ingredient.unit != null : "Ingredient incomplete!";
-        Log.d(LOG_TAG, "Ingredient: " + ingredient);
+        // Log.d(LOG_TAG, "Ingredient: " + ingredient);
         return ingredient;
     }
 

@@ -161,7 +161,7 @@ public class Recipe {
     public String toString() {
         StringBuilder recipeString = new StringBuilder();
 
-        recipeString.append(getName() + "(" + getPortions() + "P)\n");
+        recipeString.append(name + "(" + portions + "P)\n");
         recipeString.append("types: ");
         for (String cat : getCategories()) {
             recipeString.append(cat + ",");
