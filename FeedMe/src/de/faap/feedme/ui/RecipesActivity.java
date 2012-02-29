@@ -1,11 +1,14 @@
 package de.faap.feedme.ui;
 
 import java.util.*;
+import android.app.*;
 import android.content.*;
 import android.database.*;
 import android.database.sqlite.*;
 import android.os.*;
 import android.support.v4.app.*;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.*;
 import android.view.*;
 import android.view.View.OnClickListener;
@@ -31,6 +34,13 @@ public class RecipesActivity extends ActionBarActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.recipes);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            ActionBar actionBar = getActionBar();
+            actionBar
+                    .setIcon(getResources().getDrawable(R.drawable.ic_recipes));
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+        setTitle(getResources().getString(R.string.title_recipes));
 
         mContext = getApplicationContext();
         preferences = new Preferences(this);
@@ -149,7 +159,7 @@ public class RecipesActivity extends ActionBarActivity {
                     new ArrayList<ArrayList<String>>();
             if (cursor != null) {
                 String category = "";
-                ArrayList<String> recipesTmp = null;
+                ArrayList<String> recipesTmp = new ArrayList<String>();
                 while (cursor.moveToNext()) {
                     String curCategory = cursor.getString(0);
                     if (!category.equals(curCategory)) {
@@ -161,10 +171,9 @@ public class RecipesActivity extends ActionBarActivity {
                     }
                     recipesTmp.add(cursor.getString(1));
                 }
+                cursor.close();
             }
 
-            cursor.close();
-            db.close();
             v.setAdapter(new CategoryListAdapter(categories, recipes));
 
             return v;

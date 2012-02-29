@@ -3,7 +3,6 @@ package de.faap.feedme.provider;
 import android.content.*;
 import android.database.*;
 import android.database.sqlite.*;
-import android.util.*;
 import de.faap.feedme.*;
 import de.faap.feedme.util.*;
 
@@ -83,7 +82,6 @@ public class RecipeProvider implements IRecipeProvider {
             internalUnits[i] = Ingredient.Unit.values()[units[i]];
         }
 
-        Log.d("faap.feedme.RecPrv", "reached1337");
         complexRecipeData.close();
         db.close();
 

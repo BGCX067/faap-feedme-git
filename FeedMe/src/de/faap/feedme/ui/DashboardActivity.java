@@ -21,7 +21,13 @@ public class DashboardActivity extends ActionBarActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+        }
         setContentView(R.layout.dashboard);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            setProgressBarIndeterminateVisibility(false);
+        }
         this.context = this;
 
         findViewById(R.id.dashboard_btn_plan)
@@ -56,11 +62,19 @@ public class DashboardActivity extends ActionBarActivity {
                 .setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        // TODO update database
                         IUpdateDatabase updater = new DatabaseUpdater(context);
-                        getActionBarHelper().setProgressBarState(true);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                            setProgressBarIndeterminateVisibility(true);
+                        } else {
+                            getActionBarHelper().setProgressBarState(true);
+                        }
                         updater.update();
-                        getActionBarHelper().setProgressBarState(false);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                            setProgressBarIndeterminateVisibility(false);
+                        } else {
+                            getActionBarHelper().setProgressBarState(false);
+                        }
+
                     }
                 });
     }
