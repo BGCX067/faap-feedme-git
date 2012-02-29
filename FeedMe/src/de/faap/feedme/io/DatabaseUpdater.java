@@ -12,10 +12,9 @@ public class DatabaseUpdater implements IUpdateDatabase {
     AssetManager assetManager;
     Context context;
 
-    public DatabaseUpdater(Resources resMan, AssetManager assetMan,
-            Context context) {
-        xmlParser = new RecipeXMLParser(resMan);
-        this.assetManager = assetMan;
+    public DatabaseUpdater(Context context) {
+        xmlParser = new RecipeXMLParser(context.getResources());
+        this.assetManager = context.getAssets();
         this.context = context;
     }
 

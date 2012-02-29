@@ -236,12 +236,14 @@ public class RecipeValidatingXmlPullParser implements XmlPullParser {
             ValidNextTags tag = ValidNextTags.valueOf(parser.getName());
             if (!expected.contains(tag)) {
                 throw new XmlPullParserException(
-                        "This start tag is illegal here: "
+                        "This start tag is illegal here: '"
                                 + parser.getName()
-                                + ". Expected start tag (either): "
+                                + "'. Expected start tag (either): "
                                 + Arrays.toString(expected
                                         .toArray(new ValidNextTags[expected
-                                                .size()])));
+                                                .size()])) + " (Line: "
+                                + parser.getLineNumber() + ", Column: "
+                                + parser.getColumnNumber() + ").");
             }
             nextText = tag; // holds with a view exceptions, which are handled
             // below

@@ -303,7 +303,7 @@ public class RecipeXMLParser {
                 eventType = pullParser.next();
             }
         } catch (IllegalArgumentException e) {
-            Log.d(LOG_TAG,
+            Log.e(LOG_TAG,
                   "Illegal XML Tag in recipe: " + e.getLocalizedMessage());
             return false;
         } catch (XmlPullParserException e1) {
@@ -343,125 +343,116 @@ public class RecipeXMLParser {
      */
     @SuppressWarnings("incomplete-switch")
     private Recipe parseRecipe(XmlPullParser pullParser)
-            throws IllegalArgumentException {
+            throws IllegalArgumentException, XmlPullParserException,
+            IOException {
         Recipe newRecipe = null;
         hadType = false;
-        try {
-            int eventType = pullParser.getEventType();
-            assert eventType == XmlPullParser.START_TAG
-                    && pullParser.getName().equals(ValidTags.recipe.toString());
+        int eventType = pullParser.getEventType();
+        assert eventType == XmlPullParser.START_TAG
+                && pullParser.getName().equals(ValidTags.recipe.toString());
 
-            newRecipe = new Recipe(pullParser.getName());
-            newRecipe
-                    .setEffort(Effort.valueOf(pullParser.getAttributeValue(0)));
-            eventType = pullParser.next();
-            state = ParseStates.IR_BEGIN_NAME_NEXT;
+        newRecipe = new Recipe(pullParser.getName());
+        newRecipe.setEffort(Effort.valueOf(pullParser.getAttributeValue(0)));
+        eventType = pullParser.next();
+        state = ParseStates.IR_BEGIN_NAME_NEXT;
 
-            ValidTags currentTag;
-            Ingredient currentIngredient;
-            while (!(eventType == XmlPullParser.END_TAG && pullParser.getName()
-                    .equals(ValidTags.recipe.toString()))) {
-                if (eventType == XmlPullParser.START_TAG) {
-                    currentTag = ValidTags.valueOf(pullParser.getName());
-                    switch (currentTag) {
-                    case name:
-                        state = ParseStates.IR_BEGIN_NAME_NEXT;
-                        break;
-                    case ingredient:
-                        state = ParseStates.IR_INGREDIENTS;
-                        currentIngredient = parseIngredient(pullParser);
-                        if (!newRecipe.addIngredient(currentIngredient)) {
-                            throw new IllegalArgumentException(
-                                    "Duplicate ingredient "
-                                            + currentIngredient.name
-                                            + " (Line: "
-                                            + pullParser.getLineNumber() + ").");
-                        }
-                        assert pullParser.getName().equals(ValidTags.ingredient
-                                                                   .toString())
-                                && pullParser.getEventType() == XmlPullParser.END_TAG;
-                        break;
-                    case cuisine:
-                        state = ParseStates.IR_CUISINES;
-                        break;
-                    case type:
-                        state = ParseStates.IR_TYPES;
-                        break;
-                    case preparation:
-                        state = ParseStates.IR_PREPARATION;
-                        break;
-                    case portions:
-                        state = ParseStates.IR_PORTIONS;
-                        break;
-                    default:
-                        throw new IllegalStateException("Illegal parse state!");
+        ValidTags currentTag;
+        Ingredient currentIngredient;
+        while (!(eventType == XmlPullParser.END_TAG && pullParser.getName()
+                .equals(ValidTags.recipe.toString()))) {
+            if (eventType == XmlPullParser.START_TAG) {
+                currentTag = ValidTags.valueOf(pullParser.getName());
+                switch (currentTag) {
+                case name:
+                    state = ParseStates.IR_BEGIN_NAME_NEXT;
+                    break;
+                case ingredient:
+                    state = ParseStates.IR_INGREDIENTS;
+                    currentIngredient = parseIngredient(pullParser);
+                    if (!newRecipe.addIngredient(currentIngredient)) {
+                        throw new IllegalArgumentException(
+                                "Duplicate ingredient "
+                                        + currentIngredient.name + " (Line: "
+                                        + pullParser.getLineNumber() + ").");
                     }
-                } else if (eventType == XmlPullParser.TEXT) {
-                    switch (state) {
-                    case IR_BEGIN_NAME_NEXT:
-                        assert newRecipe.getName() == null; // xml schema
-                        // validation guarantuees uniqueneness (of name per
-                        // recipe)
-                        // now check global uniqueness of recipe names
-                        newRecipe.setName(pullParser.getText());
-                        if (recipeNames.contains(newRecipe.getName())) {
-                            throw new IllegalArgumentException(
-                                    "Duplicate recipe name "
-                                            + newRecipe.getName() + " (Line: "
-                                            + pullParser.getLineNumber() + ").");
-                        }
-                        recipeNames.add(newRecipe.getName());
-                        break;
-                    case IR_CUISINES:
-                        assert newRecipe.getCuisine() == null; // validation
-                        // invariant
-                        newRecipe.setCuisine(pullParser.getText());
-                        break;
-                    case IR_TYPES:
-                        if (!newRecipe.addType(pullParser.getText())) {
-                            throw new IllegalArgumentException(
-                                    "Duplicate type " + pullParser.getText()
-                                            + " (Line: "
-                                            + pullParser.getLineNumber() + ").");
-                        }
-                        break;
-                    case IR_PREPARATION:
-                        assert newRecipe.getPreparation() == null; // "xml schema validation"
-                        // guarantees
-                        // uniqueness
-                        newRecipe.setPreparation(pullParser.getText());
-                        break;
-                    case IR_PORTIONS:
-                        assert newRecipe.getPortions() == -1;
-                        newRecipe.setPortions(Integer.valueOf(pullParser
-                                .getText()));
-                        break;
-                    default:
-                        throw new IllegalStateException("Illegal parse state.");
-                    }
-                } else if (eventType == XmlPullParser.END_TAG) {
-                    currentTag = ValidTags.valueOf(pullParser.getName());
-                    switch (currentTag) {
-                    case name:
-                        state = ParseStates.IR_TYPES;
-                        break;
-                    case preparation:
-                        state = ParseStates.IR_INGREDIENTS;
-                    }
+                    assert pullParser.getName().equals(ValidTags.ingredient
+                                                               .toString())
+                            && pullParser.getEventType() == XmlPullParser.END_TAG;
+                    break;
+                case cuisine:
+                    state = ParseStates.IR_CUISINES;
+                    break;
+                case type:
+                    state = ParseStates.IR_TYPES;
+                    break;
+                case preparation:
+                    state = ParseStates.IR_PREPARATION;
+                    break;
+                case portions:
+                    state = ParseStates.IR_PORTIONS;
+                    break;
+                default:
+                    throw new IllegalStateException("Illegal parse state!");
                 }
-                eventType = pullParser.next();
+            } else if (eventType == XmlPullParser.TEXT) {
+                switch (state) {
+                case IR_BEGIN_NAME_NEXT:
+                    assert newRecipe.getName() == null; // xml schema
+                    // validation guarantuees uniqueneness (of name per
+                    // recipe)
+                    // now check global uniqueness of recipe names
+                    newRecipe.setName(pullParser.getText());
+                    if (recipeNames.contains(newRecipe.getName())) {
+                        throw new IllegalArgumentException(
+                                "Duplicate recipe name " + newRecipe.getName()
+                                        + " (Line: "
+                                        + pullParser.getLineNumber() + ").");
+                    }
+                    recipeNames.add(newRecipe.getName());
+                    break;
+                case IR_CUISINES:
+                    assert newRecipe.getCuisine() == null; // validation
+                    // invariant
+                    newRecipe.setCuisine(pullParser.getText());
+                    break;
+                case IR_TYPES:
+                    if (!newRecipe.addType(pullParser.getText())) {
+                        throw new IllegalArgumentException("Duplicate type "
+                                + pullParser.getText() + " (Line: "
+                                + pullParser.getLineNumber() + ").");
+                    }
+                    break;
+                case IR_PREPARATION:
+                    assert newRecipe.getPreparation() == null; // "xml schema validation"
+                    // guarantees
+                    // uniqueness
+                    newRecipe.setPreparation(pullParser.getText());
+                    break;
+                case IR_PORTIONS:
+                    assert newRecipe.getPortions() == -1;
+                    newRecipe
+                            .setPortions(Integer.valueOf(pullParser.getText()));
+                    break;
+                default:
+                    throw new IllegalStateException("Illegal parse state.");
+                }
+            } else if (eventType == XmlPullParser.END_TAG) {
+                currentTag = ValidTags.valueOf(pullParser.getName());
+                switch (currentTag) {
+                case name:
+                    state = ParseStates.IR_TYPES;
+                    break;
+                case preparation:
+                    state = ParseStates.IR_INGREDIENTS;
+                }
             }
+            eventType = pullParser.next();
+        }
 
-            // reached end tag, check if everything necessary was there
-            if (!recipeIsComplete(newRecipe)) {
-                throw new IllegalArgumentException(
-                        "A recipe needs all elements as specified in the .xsd file.");
-            }
-        } catch (XmlPullParserException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        // reached end tag, check if everything necessary was there
+        if (!recipeIsComplete(newRecipe)) {
+            throw new IllegalArgumentException(
+                    "A recipe needs all elements as specified in the .xsd file.");
         }
         // Log.d(LOG_TAG, "Recipe: " + newRecipe);
 
