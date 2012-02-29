@@ -8,14 +8,6 @@
       Nimm Zutat 1 und füge Zutat 2 hinzu. fertig.
     </preparation>
     <portions>4</portions>
-    <ingredient>
-      <name>Zwiebeln</name>
-      <amount>0.5</amount>
-    </ingredient>
-    <ingredient>
-      <name>Wasser</name>
-      <amount unit="ml">500</amount>
-    </ingredient>
   </recipe>
   <recipe effort="small">
     <name>Tortellini</name>
@@ -84,7 +76,7 @@
   	<name>Pizza</name>
   	<type>Ofengericht</type>
  	<cuisine>Italienisch</cuisine>
- 	<preparation>Ofen rein, warten, fertig.</preparation>
+ 	<preparation>Man nehme Dr. Oetker (oder auch nicht.)</preparation>
  	<portions>1</portions>
  	<ingredient>
  		<name>Fertigpizza</name>

@@ -44,7 +44,8 @@ public class Ingredient {
     }
 
     private String getReadableQuantity() {
-        if (quantity == 0 && unit.equals(Unit.none)) return "";
+        if (quantity == 0 && unit.equals(Unit.none))
+            return "";
 
         return String.valueOf(quantity); // TODO: use nice format
     }
@@ -56,13 +57,14 @@ public class Ingredient {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof Ingredient)) return false;
+        if (!(o instanceof Ingredient))
+            return false;
 
-        return ((Ingredient) o).name.equals(this.name);
+        return ((Ingredient) o).name.equalsIgnoreCase(this.name);
     }
 
     @Override
     public int hashCode() {
-        return name.hashCode();
+        return name.toLowerCase().hashCode();
     }
 }

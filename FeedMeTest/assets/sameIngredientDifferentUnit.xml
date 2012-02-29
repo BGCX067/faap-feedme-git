@@ -76,15 +76,15 @@
       <amount>3</amount>
     </ingredient>
     <ingredient>
-      <name>Nudeln</name>
-      <amount unit="g">400</amount>
+      <name>nudeln</name>
+      <amount unit="ml">400</amount>
     </ingredient>
   </recipe>
   <recipe effort="instant">
   	<name>Pizza</name>
   	<type>Ofengericht</type>
  	<cuisine>Italienisch</cuisine>
- 	<preparation>Ofen rein, warten, fertig.</preparation>
+ 	<preparation>Man nehme Dr. Oetker (oder auch nicht.)</preparation>
  	<portions>1</portions>
  	<ingredient>
  		<name>Fertigpizza</name>

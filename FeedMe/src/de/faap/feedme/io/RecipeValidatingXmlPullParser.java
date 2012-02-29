@@ -259,6 +259,7 @@ public class RecipeValidatingXmlPullParser implements XmlPullParser {
             case recipe:
                 startNext = true;
                 nextText = null;
+                expected.remove(ValidNextTags.recipe);
                 expected.remove(ValidNextTags.recipes); // closing recipes not
                 // allowed anymore
                 expected.add(ValidNextTags.name);
@@ -333,6 +334,8 @@ public class RecipeValidatingXmlPullParser implements XmlPullParser {
                 break;
             case recipe:
                 expected.add(ValidNextTags.recipes);
+                assert expected.contains(ValidNextTags.recipe);
+                expected.remove(ValidNextTags.ingredient);
                 startNext = true;
                 endNext = true;
                 break;
@@ -345,10 +348,13 @@ public class RecipeValidatingXmlPullParser implements XmlPullParser {
                 }
                 break;
             case type:
-                expected.remove(ValidNextTags.type);
+                assert expected.size() == 1
+                        && expected.contains(ValidNextTags.type);
                 expected.add(ValidNextTags.cuisine);
                 break;
             case cuisine:
+                expected.remove(ValidNextTags.type);
+                expected.remove(ValidNextTags.cuisine);
                 expected.add(ValidNextTags.preparation);
                 break;
             case preparation:

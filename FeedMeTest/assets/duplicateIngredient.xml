@@ -34,6 +34,10 @@
       <name>Sahne</name>
       <amount unit="g">200</amount>
     </ingredient>
+        <ingredient>
+      <name>sahne</name>
+      <amount unit="g">100</amount>
+    </ingredient>
   </recipe>
   <recipe effort="small">
     <name>Schinkennudeln</name>

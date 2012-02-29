@@ -36,7 +36,6 @@
     </ingredient>
   </recipe>
   <recipe effort="small">
-    <name>Schinkennudeln</name>
     <type>Nudeln</type>
     <cuisine>Oarmeleidessen</cuisine>
     <preparation>
@@ -84,7 +83,7 @@
   	<name>Pizza</name>
   	<type>Ofengericht</type>
  	<cuisine>Italienisch</cuisine>
- 	<preparation>Ofen rein, warten, fertig.</preparation>
+ 	<preparation>Man nehme Dr. Oetker (oder auch nicht.)</preparation>
  	<portions>1</portions>
  	<ingredient>
  		<name>Fertigpizza</name>

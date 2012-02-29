@@ -33,6 +33,7 @@
     <ingredient>
       <name>Sahne</name>
       <amount unit="g">200</amount>
+      <amount unit="ml">50</amount>
     </ingredient>
   </recipe>
   <recipe effort="small">

@@ -57,9 +57,27 @@
       <amount unit="g">400</amount>
     </ingredient>
   </recipe>
+    <recipe effort="small">
+    <name>	Nudelpfanne    </name>
+    <type>Nudeln</type>
+    <cuisine>Italienisch</cuisine>
+    <preparation>
+      Nimm Zutat 1 und füge Zutat 2 hinzu. fertig.
+    </preparation>
+    <portions>4</portions>
+    <ingredient>
+      <name>Zwiebeln</name>
+      <amount>0.5</amount>
+    </ingredient>
+    <ingredient>
+      <name>Wasser</name>
+      <amount unit="ml">500</amount>
+    </ingredient>
+  </recipe>
   <recipe effort="large">
     <name>Orangen-Curry-Hähnchen</name>
     <type>Hähnchen</type>
+    <type>Reis</type>
     <cuisine>Afrikanisch</cuisine>
     <preparation>
       Nimm Zutat 1 und füge Zutat 2 Hinzu.
@@ -78,5 +96,20 @@
       <name>Nudeln</name>
       <amount unit="g">400</amount>
     </ingredient>
+  </recipe>
+  <recipe effort="instant">
+  	<name>Pizza</name>
+  	<type>Ofengericht</type>
+ 	<cuisine>Italienisch</cuisine>
+ 	<preparation>Man nehme Dr. Oetker (oder auch nicht.)</preparation>
+ 	<portions>1</portions>
+ 	<ingredient>
+ 		<name>Fertigpizza</name>
+ 		<amount>1</amount>
+ 	</ingredient>
+ 	<ingredient>
+ 		<name>Pizzagewürz</name>
+ 		<amount unit="none">0</amount>
+ 	</ingredient>
   </recipe>
 </recipes>
