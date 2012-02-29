@@ -4,6 +4,7 @@
         android:id="@+id/menu_progressbar"
         android:icon="@drawable/ic_action_refresh"
         android:orderInCategory="0"
-        android:showAsAction="always"/>
+        android:showAsAction="always"
+        android:visible="false"/>
 
 </menu>

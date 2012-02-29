@@ -56,7 +56,6 @@ public class DashboardActivity extends ActionBarActivity {
                 .setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        // TODO update database
                         IUpdateDatabase updater =
                                 new DatabaseUpdater(getResources(),
                                         getAssets(), context);
