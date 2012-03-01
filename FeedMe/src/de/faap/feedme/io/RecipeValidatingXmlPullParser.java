@@ -230,8 +230,13 @@ public class RecipeValidatingXmlPullParser implements XmlPullParser {
             if (!startNext) {
                 throw new XmlPullParserException(
                         "A start tag is illegal here. Name: "
-                                + parser.getName() + " (Line: "
-                                + parser.getLineNumber() + ").");
+                                + parser.getName()
+                                + " (Line: "
+                                + parser.getLineNumber()
+                                + ")."
+                                + " Valid would be: "
+                                + (endNext ? "End Tag: " + expected
+                                        : "Content for tag: " + nextText) + ".");
             }
             ValidNextTags tag = ValidNextTags.valueOf(parser.getName());
             if (!expected.contains(tag)) {
@@ -245,7 +250,7 @@ public class RecipeValidatingXmlPullParser implements XmlPullParser {
                                 + parser.getLineNumber() + ", Column: "
                                 + parser.getColumnNumber() + ").");
             }
-            nextText = tag; // holds with a view exceptions, which are handled
+            nextText = tag; // holds with a few exceptions, which are handled
             // below
             startNext = false;
             endNext = false;
@@ -310,8 +315,13 @@ public class RecipeValidatingXmlPullParser implements XmlPullParser {
         } else if (event == XmlPullParser.END_TAG) {
             if (!endNext) {
                 throw new XmlPullParserException(
-                        "An end tag is illegal here. Name: " + parser.getName()
-                                + " Line(" + parser.getLineNumber() + ").");
+                        "An end tag is illegal here. Name: "
+                                + parser.getName()
+                                + " (Line"
+                                + parser.getLineNumber()
+                                + ")."
+                                + (startNext ? "Start Tag: " + expected
+                                        : "Content for tag: " + nextText) + ".");
             }
             ValidNextTags tag = ValidNextTags.valueOf(parser.getName());
             if (!expected.contains(tag)) {

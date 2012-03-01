@@ -1,4 +1,4 @@
-package de.faap.feedme.io.test;
+package de.faap.feedme.io;
 
 import java.io.*;
 import android.content.*;

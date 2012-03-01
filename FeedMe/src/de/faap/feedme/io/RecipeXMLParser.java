@@ -368,12 +368,13 @@ public class RecipeXMLParser {
                     break;
                 case ingredient:
                     state = ParseStates.IR_INGREDIENTS;
+                    int ingredientBeginLine = pullParser.getLineNumber();
                     currentIngredient = parseIngredient(pullParser);
                     if (!newRecipe.addIngredient(currentIngredient)) {
                         throw new IllegalArgumentException(
                                 "Duplicate ingredient "
                                         + currentIngredient.name + " (Line: "
-                                        + pullParser.getLineNumber() + ").");
+                                        + ingredientBeginLine + ").");
                     }
                     assert pullParser.getName().equals(ValidTags.ingredient
                                                                .toString())
@@ -402,13 +403,13 @@ public class RecipeXMLParser {
                     // recipe)
                     // now check global uniqueness of recipe names
                     newRecipe.setName(pullParser.getText());
-                    if (recipeNames.contains(newRecipe.getName())) {
+                    if (recipeNames.contains(newRecipe.getName().toLowerCase())) {
                         throw new IllegalArgumentException(
                                 "Duplicate recipe name " + newRecipe.getName()
                                         + " (Line: "
                                         + pullParser.getLineNumber() + ").");
                     }
-                    recipeNames.add(newRecipe.getName());
+                    recipeNames.add(newRecipe.getName().toLowerCase());
                     break;
                 case IR_CUISINES:
                     assert newRecipe.getCuisine() == null; // validation
