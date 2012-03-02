@@ -40,7 +40,7 @@
         <xs:complexType>
           <xs:simpleContent>
             <xs:extension base="xs:decimal">
-              <xs:attribute name="unit" type="units"/>
+              <xs:attribute name="unit" type="units" default="count"/>
             </xs:extension>
           </xs:simpleContent>
         </xs:complexType>
@@ -53,7 +53,8 @@
     <xs:restriction base="xs:string">
       <xs:enumeration value="g"/>
       <xs:enumeration value="ml"/>
-      <xs:enumeration value=""/>
+      <xs:enumeration value="count"/>
+      <xs:enumeration value="none"/>
     </xs:restriction>
   </xs:simpleType>
 </xs:schema>

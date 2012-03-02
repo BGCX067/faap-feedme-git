@@ -83,7 +83,7 @@
   <recipe effort="instant">
   	<name>Pizza</name>
   	<type>Ofengericht</type>
- 	<cuisine>Italienisch</cuisine>
+ 	<cuisine>italienisch</cuisine>
  	<preparation>Ofen rein, warten, fertig.</preparation>
  	<portions>1</portions>
  	<ingredient>

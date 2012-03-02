@@ -13,7 +13,7 @@ import de.faap.feedme.util.Recipe.Effort;
 
 public class RecipeXMLParser {
     private static final String LOG_TAG = "faap.feedme.xmlparse";
-    private static final String ID_HEADER = "_id";
+    public static final String ID_HEADER = "_id";
 
     private Resources resourceManager;
 
@@ -124,8 +124,9 @@ public class RecipeXMLParser {
                                   recipe.getPreparation());
 
             // set categories
-            ContentValues categoriesRecipeTableEntry = new ContentValues();
+            ContentValues categoriesRecipeTableEntry;
             for (String category : recipe.getCategories()) {
+                categoriesRecipeTableEntry = new ContentValues();
                 referenceKey = pushCategory(category, dbCategoriesTable);
                 categoriesRecipeTableEntry.put(ValidTags.recipe.toString(), i);
                 categoriesRecipeTableEntry.put(ValidTags.type.toString(),
