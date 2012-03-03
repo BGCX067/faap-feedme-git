@@ -1,5 +1,6 @@
 package de.faap.feedme.ui;
 
+import java.util.*;
 import android.app.*;
 import android.content.*;
 import android.os.*;
@@ -73,10 +74,18 @@ public class PlanActivity extends ActionBarActivity {
                     provider.getNewWeek(preferences.getCheckedButtons());
             preferences.saveWeek(week);
             mFPAdapter.notifyDataSetChanged();
+            saveUpdateTime(new GregorianCalendar());
             getActionBarHelper().setRefreshActionItemState(false);
             break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    protected void saveUpdateTime(GregorianCalendar calendar) {
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        int month = calendar.get(Calendar.MONTH);
+        int year = calendar.get(Calendar.YEAR);
+        preferences.saveLastUpdate(year, month, day);
     }
 
     /**
@@ -141,18 +150,22 @@ public class PlanActivity extends ActionBarActivity {
                 Bundle savedInstanceState) {
             View v = inflater.inflate(R.layout.week, container, false);
 
-            // // Check if automatic weekly update is needed
-            // int[] nextUpdate = preferences.getNextUpdate();
-            // GregorianCalendar now = new GregorianCalendar();
-            // GregorianCalendar update =
-            // new GregorianCalendar(nextUpdate[0], nextUpdate[1],
-            // nextUpdate[2]);
-            // if (now.compareTo(update) >= 0) {
-            // // update needed
-            // IRecipeProvider provider = new RecipeProvider(mContext);
-            // preferences.saveWeek(provider.getNewWeek(preferences
-            // .getCheckedButtons()));
-            // }
+            // Check if automatic weekly update is needed
+            int[] lastUpdate = preferences.getLastUpdate();
+            GregorianCalendar now = new GregorianCalendar();
+            GregorianCalendar nextUpdate =
+                    new GregorianCalendar(lastUpdate[0], lastUpdate[1],
+                            lastUpdate[2]);
+            nextUpdate.add(Calendar.DAY_OF_YEAR, 7);
+            if (now.compareTo(nextUpdate) >= 0) {
+                // update needed
+                IRecipeProvider provider = new RecipeProvider(mContext);
+                preferences.saveWeek(provider.getNewWeek(preferences
+                        .getCheckedButtons()));
+                saveUpdateTime(now);
+                mFPAdapter.notifyDataSetChanged();
+
+            }
 
             // Find textviews
             TextView sat = (TextView) v.findViewById(R.id.rcp_sat);
@@ -219,9 +232,9 @@ public class PlanActivity extends ActionBarActivity {
                     IRecipeProvider provider = new RecipeProvider(mContext);
                     int[] pref = { prefs[day] };
                     String recipe = provider.getNewWeek(pref)[0];
-                    ((TextView) view).setText(recipe);
                     week[day] = recipe;
                     preferences.saveWeek(week);
+                    mFPAdapter.notifyDataSetChanged();
                 }
             };
         }

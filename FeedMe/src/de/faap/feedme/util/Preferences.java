@@ -33,60 +33,6 @@ public class Preferences implements IPreferences {
     }
 
     @Override
-    public String[] getType() {
-        String[] type = new String[preferences.getInt("type", 0)];
-        for (int i = 0; i < type.length; i++) {
-            type[i] = preferences.getString("type" + i, "");
-        }
-        return type;
-    }
-
-    @Override
-    public void saveType(String[] type) {
-        editor.putInt("type", type.length);
-        for (int i = 0; i < type.length; i++) {
-            editor.putString("type" + i, type[i]);
-        }
-        editor.commit();
-    }
-
-    @Override
-    public String[] getEffort() {
-        String[] effort = new String[preferences.getInt("effort", 0)];
-        for (int i = 0; i < effort.length; i++) {
-            effort[i] = preferences.getString("effort" + i, "");
-        }
-        return effort;
-    }
-
-    @Override
-    public void saveEffort(String[] effort) {
-        editor.putInt("effort", effort.length);
-        for (int i = 0; i < effort.length; i++) {
-            editor.putString("effort" + i, effort[i]);
-        }
-        editor.commit();
-    }
-
-    @Override
-    public String[] getCuisine() {
-        String[] cuisine = new String[preferences.getInt("cuisine", 0)];
-        for (int i = 0; i < cuisine.length; i++) {
-            cuisine[i] = preferences.getString("cuisine" + i, "");
-        }
-        return cuisine;
-    }
-
-    @Override
-    public void saveCuisine(String[] cuisine) {
-        editor.putInt("cuisine", cuisine.length);
-        for (int i = 0; i < cuisine.length; i++) {
-            editor.putString("cuisine" + i, cuisine[i]);
-        }
-        editor.commit();
-    }
-
-    @Override
     public String[] getWeek() {
         String[] week = new String[7];
         for (int i = 0; i < week.length; i++) {
@@ -104,7 +50,7 @@ public class Preferences implements IPreferences {
     }
 
     @Override
-    public int[] getNextUpdate() {
+    public int[] getLastUpdate() {
         int[] lastUpdate = new int[3];
         lastUpdate[0] = preferences.getInt("upd_year", 0);
         lastUpdate[1] = preferences.getInt("upd_month", 1);
@@ -113,7 +59,7 @@ public class Preferences implements IPreferences {
     }
 
     @Override
-    public void saveNextUpdate(int year, int month, int day) {
+    public void saveLastUpdate(int year, int month, int day) {
         editor.putInt("upd_year", year);
         editor.putInt("upd_month", month);
         editor.putInt("upd_day", day);
