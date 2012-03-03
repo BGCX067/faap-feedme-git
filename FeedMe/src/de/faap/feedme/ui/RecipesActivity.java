@@ -133,7 +133,7 @@ public class RecipesActivity extends ActionBarActivity {
                                      false);
             RecipeDatabaseHelper openHelper =
                     new RecipeDatabaseHelper(mContext);
-            SQLiteDatabase db = openHelper.getWritableDatabase();
+            SQLiteDatabase db = openHelper.getReadableDatabase();
 
             Cursor cursor;
             switch (pos) {

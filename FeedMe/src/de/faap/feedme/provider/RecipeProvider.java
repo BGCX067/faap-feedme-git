@@ -1,9 +1,11 @@
 package de.faap.feedme.provider;
 
+import java.util.*;
 import android.content.*;
 import android.database.*;
 import android.database.sqlite.*;
 import de.faap.feedme.*;
+import de.faap.feedme.provider.RecipeDatabaseHelper.Tables;
 import de.faap.feedme.util.*;
 
 public class RecipeProvider implements IRecipeProvider {
@@ -91,18 +93,43 @@ public class RecipeProvider implements IRecipeProvider {
 
     @Override
     public String[] getNewWeek(int[] prefs) {
-        // TODO query
+        RecipeDatabaseHelper openHelper = new RecipeDatabaseHelper(mContext);
+        SQLiteDatabase db = openHelper.getReadableDatabase();
 
+        Cursor cursorInstant =
+                getRecipesByEffort(db, Recipe.Effort.instant.toString());
+        Cursor cursorSmall =
+                getRecipesByEffort(db, Recipe.Effort.small.toString());
+        Cursor cursorLarge =
+                getRecipesByEffort(db, Recipe.Effort.large.toString());
+
+        int cursorInstantLength = cursorInstant.getCount();
+        int cursorSmallLength = cursorSmall.getCount();
+        int cursorLargeLength = cursorLarge.getCount();
+
+        Random generator = new Random();
         int[] time = convertPrefs(prefs);
         String[] week = new String[prefs.length];
         for (int i = 0; i < time.length; i++) {
             if (time[i] == LITTLE_TIME) {
-                // TODO choose either fertiggericht oder schnelles gericht
+                // choose either instant or small recipe
+                double random = generator.nextDouble();
+                if (random <= 0.5) {
+                    cursorInstant.moveToPosition(generator
+                            .nextInt(cursorInstantLength));
+                    week[i] = cursorInstant.getString(0);
+                } else {
+                    cursorSmall.moveToPosition(generator
+                            .nextInt(cursorSmallLength));
+                    week[i] = cursorSmall.getString(0);
+                }
             } else if (time[i] == MUCH_TIME) {
-                // TODO choose großes gericht
+                cursorLarge
+                        .moveToPosition(generator.nextInt(cursorLargeLength));
+                week[i] = cursorLarge.getString(0);
                 if (i != 6) {
                     if (time[i + 1] != NO_TIME) {
-                        // Cook for two days
+                        week[i + 1] = week[i];
                         i++;
                     }
                 }
@@ -110,6 +137,13 @@ public class RecipeProvider implements IRecipeProvider {
                 week[i] = "";
             }
         }
+
+        cursorInstant.close();
+        cursorSmall.close();
+        cursorLarge.close();
+        db.close();
+        openHelper.close();
+
         return week;
     }
 
@@ -135,4 +169,17 @@ public class RecipeProvider implements IRecipeProvider {
         }
         return convertedPrefs;
     }
+
+    private Cursor getRecipesByEffort(SQLiteDatabase db, String effort) {
+        return db
+                .rawQuery("SELECT " + Tables.Recipes.toString() + ".name "
+                                  + "FROM " + Tables.Recipes.toString()
+                                  + " INNER JOIN " + Tables.Effort.toString()
+                                  + " ON " + Tables.Recipes.toString()
+                                  + ".effort = " + Tables.Effort.toString()
+                                  + "._id " + "WHERE "
+                                  + Tables.Effort.toString() + ".name = \""
+                                  + effort + "\"", null);
+    }
+
 }

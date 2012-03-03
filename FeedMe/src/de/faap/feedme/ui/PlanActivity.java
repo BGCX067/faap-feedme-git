@@ -68,18 +68,9 @@ public class PlanActivity extends ActionBarActivity {
 
         case R.id.menu_refresh:
             getActionBarHelper().setRefreshActionItemState(true);
-
-            // TODO refresh week & save
-            String[] week = new String[7];
-            MockModel model = new MockModel();
-            week[0] = model.IWillTakeMyTimeToCreateSomethingSpecial();
-            week[1] = week[0];
-            week[2] = model.iWantFoodFast();
-            week[3] = model.iWantFoodFast();
-            week[4] = model.iWantFoodFast();
-            week[5] = "---";
-            week[6] = "---";
-
+            RecipeProvider provider = new RecipeProvider(mContext);
+            String[] week =
+                    provider.getNewWeek(preferences.getCheckedButtons());
             preferences.saveWeek(week);
             mFPAdapter.notifyDataSetChanged();
             getActionBarHelper().setRefreshActionItemState(false);
@@ -150,13 +141,12 @@ public class PlanActivity extends ActionBarActivity {
                 Bundle savedInstanceState) {
             View v = inflater.inflate(R.layout.week, container, false);
 
-            // TODO wenn db fertig kommentare entfernen
-
             // // Check if automatic weekly update is needed
             // int[] nextUpdate = preferences.getNextUpdate();
             // GregorianCalendar now = new GregorianCalendar();
-            // GregorianCalendar update = new GregorianCalendar(nextUpdate[0],
-            // nextUpdate[1], nextUpdate[2]);
+            // GregorianCalendar update =
+            // new GregorianCalendar(nextUpdate[0], nextUpdate[1],
+            // nextUpdate[2]);
             // if (now.compareTo(update) >= 0) {
             // // update needed
             // IRecipeProvider provider = new RecipeProvider(mContext);
@@ -185,8 +175,12 @@ public class PlanActivity extends ActionBarActivity {
             OnClickListener listener = new OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    startActivity(buildIntent((String) ((TextView) view)
-                            .getText()));
+                    String recipe = (String) ((TextView) view).getText();
+                    // If the recipe-name is empty, don't start the preparation
+                    // activity
+                    if (!recipe.equals("")) {
+                        startActivity(buildIntent(recipe));
+                    }
                 }
             };
             sat.setOnClickListener(listener);
@@ -197,25 +191,39 @@ public class PlanActivity extends ActionBarActivity {
             thu.setOnClickListener(listener);
             fri.setOnClickListener(listener);
 
-            // TODO Set refresh listeners
-            // this is a mock for update week button without saving
-            ((Button) v.findViewById(R.id.rcp_btn_sat))
-                    .setOnClickListener(new OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            IRecipeProvider provider =
-                                    new RecipeProvider(mContext);
-                            provider.getNewWeek(preferences.getCheckedButtons());
-                        }
-                    });
-            // ((Button) v.findViewById(R.id.rcp_btn_sun)).
-            // ((Button) v.findViewById(R.id.rcp_btn_mon)).
-            // ((Button) v.findViewById(R.id.rcp_btn_tue)).
-            // ((Button) v.findViewById(R.id.rcp_btn_wed)).
-            // ((Button) v.findViewById(R.id.rcp_btn_thu)).
-            // ((Button) v.findViewById(R.id.rcp_btn_fri)).
+            // refresh buttons
+            ((ImageButton) v.findViewById(R.id.rcp_btn_sat))
+                    .setOnClickListener(getNewRefreshListener(0));
+            ((ImageButton) v.findViewById(R.id.rcp_btn_sun))
+                    .setOnClickListener(getNewRefreshListener(1));
+            ((ImageButton) v.findViewById(R.id.rcp_btn_mon))
+                    .setOnClickListener(getNewRefreshListener(2));
+            ((ImageButton) v.findViewById(R.id.rcp_btn_tue))
+                    .setOnClickListener(getNewRefreshListener(3));
+            ((ImageButton) v.findViewById(R.id.rcp_btn_wed))
+                    .setOnClickListener(getNewRefreshListener(4));
+            ((ImageButton) v.findViewById(R.id.rcp_btn_thu))
+                    .setOnClickListener(getNewRefreshListener(5));
+            ((ImageButton) v.findViewById(R.id.rcp_btn_fri))
+                    .setOnClickListener(getNewRefreshListener(6));
 
             return v;
+        }
+
+        private OnClickListener getNewRefreshListener(final int day) {
+            return new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    String week[] = preferences.getWeek();
+                    int[] prefs = preferences.getCheckedButtons();
+                    IRecipeProvider provider = new RecipeProvider(mContext);
+                    int[] pref = { prefs[day] };
+                    String recipe = provider.getNewWeek(pref)[0];
+                    ((TextView) view).setText(recipe);
+                    week[day] = recipe;
+                    preferences.saveWeek(week);
+                }
+            };
         }
 
         /**
