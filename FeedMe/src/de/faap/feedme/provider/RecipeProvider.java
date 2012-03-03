@@ -92,7 +92,7 @@ public class RecipeProvider implements IRecipeProvider {
     }
 
     @Override
-    public String[] getNewWeek(int[] prefs) {
+    public String[] proposeRecipes(int[] prefs) {
         RecipeDatabaseHelper openHelper = new RecipeDatabaseHelper(mContext);
         SQLiteDatabase db = openHelper.getReadableDatabase();
 

@@ -20,10 +20,10 @@ import de.faap.feedme.provider.*;
 import de.faap.feedme.util.*;
 
 public class RecipesActivity extends ActionBarActivity {
-    static final int NUM_ITEMS = 3;
+    protected static final int NUM_ITEMS = 3;
 
-    static Context mContext;
-    static Preferences preferences;
+    protected static Context mContext;
+    protected static Preferences preferences;
 
     private mFPAdapter mFPAdapter;
     private ViewPager mViewPager;
@@ -104,7 +104,7 @@ public class RecipesActivity extends ActionBarActivity {
      * @author joe
      * 
      */
-    private static class CategoryFragment extends Fragment {
+    protected static class CategoryFragment extends Fragment {
 
         private int pos;
 
@@ -131,6 +131,7 @@ public class RecipesActivity extends ActionBarActivity {
                     (ExpandableListView) inflater
                             .inflate(R.layout.recipe_categories, container,
                                      false);
+
             RecipeDatabaseHelper openHelper =
                     new RecipeDatabaseHelper(mContext);
             SQLiteDatabase db = openHelper.getReadableDatabase();
@@ -174,6 +175,8 @@ public class RecipesActivity extends ActionBarActivity {
                 cursor.close();
             }
 
+            db.close();
+            openHelper.close();
             v.setAdapter(new CategoryListAdapter(categories, recipes));
 
             return v;

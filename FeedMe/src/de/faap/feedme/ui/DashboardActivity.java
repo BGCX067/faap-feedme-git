@@ -63,18 +63,19 @@ public class DashboardActivity extends ActionBarActivity {
                     @Override
                     public void onClick(View v) {
                         IUpdateDatabase updater = new DatabaseUpdater(context);
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                            setProgressBarIndeterminateVisibility(true);
-                        } else {
-                            getActionBarHelper().setProgressBarState(true);
+                        if (!updater.isUpToDate()) {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                                setProgressBarIndeterminateVisibility(true);
+                            } else {
+                                getActionBarHelper().setProgressBarState(true);
+                            }
+                            updater.update();
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                                setProgressBarIndeterminateVisibility(false);
+                            } else {
+                                getActionBarHelper().setProgressBarState(false);
+                            }
                         }
-                        updater.update();
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                            setProgressBarIndeterminateVisibility(false);
-                        } else {
-                            getActionBarHelper().setProgressBarState(false);
-                        }
-
                     }
                 });
     }

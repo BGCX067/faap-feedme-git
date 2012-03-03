@@ -19,10 +19,10 @@ import de.faap.feedme.provider.*;
 import de.faap.feedme.util.*;
 
 public class PreperationActivity extends ActionBarActivity {
-    static final int NUM_ITEMS = 2;
+    protected static final int NUM_ITEMS = 2;
 
-    static Context mContext;
-    static Recipe recipe;
+    protected static Context mContext;
+    protected static Recipe recipe;
 
     private IRecipeProvider db;
     private mFPAdapter mFPAdapter;
@@ -106,7 +106,7 @@ public class PreperationActivity extends ActionBarActivity {
         }
     }
 
-    private class IngredientsFragment extends Fragment {
+    protected class IngredientsFragment extends Fragment {
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -146,9 +146,72 @@ public class PreperationActivity extends ActionBarActivity {
 
             return v;
         }
+
+        /**
+         * This dialog fragment handles portion changes
+         */
+        private class PortionPickerDialogFragment extends DialogFragment {
+            @Override
+            public void onCreate(Bundle savedInstanceState) {
+                super.onCreate(savedInstanceState);
+            }
+
+            @Override
+            public View onCreateView(LayoutInflater inflater,
+                    ViewGroup container, Bundle savedInstanceState) {
+                View v =
+                        inflater.inflate(R.layout.portion_dialog, container,
+                                         false);
+
+                // set portions
+                final EditText text =
+                        (EditText) v.findViewById(R.id.port_dia_text);
+                text.setText(Integer.toString(recipe.getPortions()));
+
+                // implement button listeners
+                ((Button) v.findViewById(R.id.port_dia_dec))
+                        .setOnClickListener(new OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                int portions =
+                                        Integer.parseInt(text.getText()
+                                                .toString());
+                                if (portions > 1) {
+                                    text.setText(Integer.toString(portions - 1));
+                                }
+                            }
+                        });
+
+                ((Button) v.findViewById(R.id.port_dia_inc))
+                        .setOnClickListener(new OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                int portions =
+                                        Integer.parseInt(text.getText()
+                                                .toString());
+                                text.setText(Integer.toString(portions + 1));
+                            }
+                        });
+
+                ((Button) v.findViewById(R.id.port_dia_ok))
+                        .setOnClickListener(new OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                int portions =
+                                        Integer.parseInt(text.getText()
+                                                .toString());
+                                recipe.changePortions(portions);
+                                mFPAdapter.notifyDataSetChanged();
+                                dismiss();
+                            }
+                        });
+
+                return v;
+            }
+        }
     }
 
-    private class PreperationFragment extends Fragment {
+    protected class PreperationFragment extends Fragment {
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -161,64 +224,6 @@ public class PreperationActivity extends ActionBarActivity {
             View v = inflater.inflate(R.layout.prepdetails, container, false);
             TextView mTextView = (TextView) v.findViewById(R.id.prep_textview);
             mTextView.setText(recipe.getPreparation());
-            return v;
-        }
-    }
-
-    /**
-     * This dialog fragment handles portion changes
-     */
-    private class PortionPickerDialogFragment extends DialogFragment {
-        @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
-            View v =
-                    inflater.inflate(R.layout.portion_dialog, container, false);
-
-            // set portions
-            final EditText text = (EditText) v.findViewById(R.id.port_dia_text);
-            text.setText(Integer.toString(recipe.getPortions()));
-
-            // implement button listeners
-            ((Button) v.findViewById(R.id.port_dia_dec))
-                    .setOnClickListener(new OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            int portions =
-                                    Integer.parseInt(text.getText().toString());
-                            if (portions > 1) {
-                                text.setText(Integer.toString(portions - 1));
-                            }
-                        }
-                    });
-
-            ((Button) v.findViewById(R.id.port_dia_inc))
-                    .setOnClickListener(new OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            int portions =
-                                    Integer.parseInt(text.getText().toString());
-                            text.setText(Integer.toString(portions + 1));
-                        }
-                    });
-
-            ((Button) v.findViewById(R.id.port_dia_ok))
-                    .setOnClickListener(new OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            int portions =
-                                    Integer.parseInt(text.getText().toString());
-                            recipe.changePortions(portions);
-                            mFPAdapter.notifyDataSetChanged();
-                            dismiss();
-                        }
-                    });
-
             return v;
         }
     }

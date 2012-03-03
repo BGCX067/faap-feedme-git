@@ -19,12 +19,12 @@ import de.faap.feedme.util.*;
 
 public class PlanActivity extends ActionBarActivity {
 
-    static final int NUM_ITEMS = 2;
+    protected static final int NUM_ITEMS = 2;
 
-    Context mContext;
-    Preferences preferences;
+    protected Context mContext;
+    protected Preferences preferences;
+    protected mFPAdapter mFPAdapter;
 
-    private mFPAdapter mFPAdapter;
     private ViewPager mViewPager;
     private TitlePageIndicator mTPIndicator;
 
@@ -43,8 +43,8 @@ public class PlanActivity extends ActionBarActivity {
 
         mContext = getApplicationContext();
         preferences = new Preferences(this);
-
         mFPAdapter = new mFPAdapter(getSupportFragmentManager());
+
         mViewPager = (ViewPager) findViewById(R.id.plan_viewpager);
         mViewPager.setAdapter(mFPAdapter);
         mTPIndicator = (TitlePageIndicator) findViewById(R.id.plan_indicator);
@@ -71,10 +71,10 @@ public class PlanActivity extends ActionBarActivity {
             getActionBarHelper().setRefreshActionItemState(true);
             RecipeProvider provider = new RecipeProvider(mContext);
             String[] week =
-                    provider.getNewWeek(preferences.getCheckedButtons());
+                    provider.proposeRecipes(preferences.getCheckedButtons());
+            saveUpdateTime(new GregorianCalendar());
             preferences.saveWeek(week);
             mFPAdapter.notifyDataSetChanged();
-            saveUpdateTime(new GregorianCalendar());
             getActionBarHelper().setRefreshActionItemState(false);
             break;
         }
@@ -139,7 +139,7 @@ public class PlanActivity extends ActionBarActivity {
      * @author joe
      * 
      */
-    private class WeekFragment extends Fragment {
+    protected class WeekFragment extends Fragment {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -151,20 +151,19 @@ public class PlanActivity extends ActionBarActivity {
             View v = inflater.inflate(R.layout.week, container, false);
 
             // Check if automatic weekly update is needed
-            int[] lastUpdate = preferences.getLastUpdate();
             GregorianCalendar now = new GregorianCalendar();
+            int[] lastUpdate = preferences.getLastUpdate();
             GregorianCalendar nextUpdate =
                     new GregorianCalendar(lastUpdate[0], lastUpdate[1],
                             lastUpdate[2]);
             nextUpdate.add(Calendar.DAY_OF_YEAR, 7);
             if (now.compareTo(nextUpdate) >= 0) {
                 // update needed
-                IRecipeProvider provider = new RecipeProvider(mContext);
-                preferences.saveWeek(provider.getNewWeek(preferences
-                        .getCheckedButtons()));
                 saveUpdateTime(now);
+                IRecipeProvider provider = new RecipeProvider(mContext);
+                preferences.saveWeek(provider.proposeRecipes(preferences
+                        .getCheckedButtons()));
                 mFPAdapter.notifyDataSetChanged();
-
             }
 
             // Find textviews
@@ -175,6 +174,7 @@ public class PlanActivity extends ActionBarActivity {
             TextView wed = (TextView) v.findViewById(R.id.rcp_wed);
             TextView thu = (TextView) v.findViewById(R.id.rcp_thu);
             TextView fri = (TextView) v.findViewById(R.id.rcp_fri);
+
             // Set recipe names
             String[] week = preferences.getWeek();
             sat.setText(week[0]);
@@ -184,6 +184,7 @@ public class PlanActivity extends ActionBarActivity {
             wed.setText(week[4]);
             thu.setText(week[5]);
             fri.setText(week[6]);
+
             // Set listeners
             OnClickListener listener = new OnClickListener() {
                 @Override
@@ -228,10 +229,10 @@ public class PlanActivity extends ActionBarActivity {
                 @Override
                 public void onClick(View view) {
                     String week[] = preferences.getWeek();
-                    int[] prefs = preferences.getCheckedButtons();
+                    // find effort preference for the given day
+                    int[] prefs = { preferences.getCheckedButtons()[day] };
                     IRecipeProvider provider = new RecipeProvider(mContext);
-                    int[] pref = { prefs[day] };
-                    String recipe = provider.getNewWeek(pref)[0];
+                    String recipe = provider.proposeRecipes(prefs)[0];
                     week[day] = recipe;
                     preferences.saveWeek(week);
                     mFPAdapter.notifyDataSetChanged();
@@ -258,7 +259,7 @@ public class PlanActivity extends ActionBarActivity {
      * @author joe
      * 
      */
-    private class PlannerFragment extends Fragment {
+    protected class PlannerFragment extends Fragment {
         // radio groups handles needed for loading and saving preferences
         private RadioGroup sat;
         private RadioGroup sun;

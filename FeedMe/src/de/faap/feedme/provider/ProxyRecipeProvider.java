@@ -27,14 +27,11 @@ public class ProxyRecipeProvider implements IRecipeProvider {
         if (map.containsKey(name)) {
             return map.get(name);
         }
-        // TODO collapse
-        IRecipeProvider provider = new RecipeProvider(mContext);
-        Recipe recipe = provider.getRecipe(name);
-        return recipe;
+        return new RecipeProvider(mContext).getRecipe(name);
     }
 
     @Override
-    public String[] getNewWeek(int[] prefs) {
-        return new RecipeProvider(mContext).getNewWeek(prefs);
+    public String[] proposeRecipes(int[] prefs) {
+        return new RecipeProvider(mContext).proposeRecipes(prefs);
     }
 }
