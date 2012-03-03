@@ -127,7 +127,7 @@ public class RecipeProvider implements IRecipeProvider {
                 cursorLarge
                         .moveToPosition(generator.nextInt(cursorLargeLength));
                 week[i] = cursorLarge.getString(0);
-                if (i != 6) {
+                if (i + 1 < time.length) {
                     if (time[i + 1] != NO_TIME) {
                         week[i + 1] = week[i];
                         i++;
